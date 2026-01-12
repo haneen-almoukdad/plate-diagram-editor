@@ -1,0 +1,224 @@
+/* ===== TOOLBAR STYLING ===== */
+/* Design mit Lucide Icons */
+
+.toolbar {
+  background: #f8fafc;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  border-right: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+
+
+
+
+/* ===== BUTTON STYLING ===== */
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.15s ease;
+}
+
+.toolbar-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.toolbar-btn:active {
+  transform: scale(0.98);
+  background: #e2e8f0;
+}
+
+/* Icon-only Buttons (kleiner, quadratisch) */
+.toolbar-btn.icon-only {
+  padding: 8px;
+  min-width: 36px;
+  justify-content: center;
+}
+
+/* Delete Button - rot beim Hover */
+.toolbar-btn.icon-only.delete:hover {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+/* Button Text - kann auf kleinen Bildschirmen ausgeblendet werden */
+.toolbar-btn-text {
+  white-space: nowrap;
+}
+
+/* Primäre Buttons (grün) */
+.toolbar-btn.primary {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);
+}
+
+.toolbar-btn.primary:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.4);
+}
+
+.toolbar-btn.primary:active {
+  box-shadow: 0 1px 2px rgba(22, 163, 74, 0.3);
+}
+
+/* ===== ZOOM ANZEIGE ===== */
+
+.toolbar-zoom-display {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  min-width: 48px;
+  text-align: center;
+  padding: 0 4px;
+}
+
+/* ===== DROPDOWN-MENÜ ===== */
+
+.toolbar-dropdown {
+  position: relative;
+}
+
+/* Chevron Animation */
+.toolbar-chevron {
+  transition: transform 0.2s ease;
+  margin-left: 2px;
+}
+
+.toolbar-chevron.open {
+  transform: rotate(180deg);
+}
+
+.toolbar-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  min-width: 220px;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s;
+  color: #475569;
+}
+
+.toolbar-dropdown-item:hover {
+  background: #f8fafc;
+}
+
+.toolbar-dropdown-item:not(:last-child) {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Dropdown Icon Farben */
+.dropdown-icon.png {
+  color: #3b82f6;
+}
+
+.dropdown-icon.svg {
+  color: #8b5cf6;
+}
+
+.toolbar-dropdown-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toolbar-dropdown-item-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.toolbar-dropdown-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Auf kleinen Bildschirmen nur Icons zeigen */
+
+@media (max-width: 900px) {
+  .toolbar-btn-text {
+    display: none;
+  }
+  
+  .toolbar-btn {
+    padding: 8px;
+  }
+  
+  .toolbar-group {
+    padding: 0 4px;
+  }
+}
+
+/* ===== AKTIVE TOOLBAR-BUTTONS ===== */
+/* Für Select-Tool und Grid-Snapping wenn sie aktiv sind */
+
+.toolbar-btn.icon-only.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.toolbar-btn.icon-only.active:hover {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}

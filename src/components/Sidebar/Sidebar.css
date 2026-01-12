@@ -1,0 +1,149 @@
+/* ===== SIDEBAR STYLING ===== */
+/* Professionelles Design mit Lucide Icons */
+
+.sidebar {
+  width: 220px;  /* Breiter für bessere Lesbarkeit */
+  background: #fafafa;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  letter-spacing: 0.8px;
+}
+
+/* ===== BUTTON STYLING ===== */
+
+.sidebar-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 6px;
+  transition: all 0.15s ease;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.sidebar-button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.sidebar-button:active {
+  transform: scale(0.98);
+}
+
+/* Ausgewählter Button */
+.sidebar-button.selected {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.sidebar-button.selected .sidebar-icon {
+  color: #3b82f6;
+}
+
+/* Icon Styling */
+.sidebar-icon {
+  flex-shrink: 0;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.sidebar-button:hover .sidebar-icon {
+  color: #475569;
+}
+
+/* Label Styling */
+.sidebar-button-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+/* ===== AKTIVE TOOLBAR-BUTTONS ===== */
+/* Für Select-Tool und Grid-Snapping wenn sie aktiv sind */
+
+.toolbar-btn.icon-only.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.toolbar-btn.icon-only.active:hover {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+/* Optional: Kleiner Indikator-Punkt für aktive Tools */
+.toolbar-btn.icon-only.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #3b82f6;
+  border-radius: 50%;
+}
+
+/* Position relativ für den Indikator-Punkt */
+.toolbar-btn.icon-only {
+  position: relative;
+}
+
+/* ===========================================
+   HINWEIS: TOOLBAR-GROUP-RIGHT KANN ENTFERNT WERDEN
+   ===========================================
+   Da der Generate-Button entfernt wurde, brauchst du diese
+   Klasse nicht mehr. Du kannst sie in deiner CSS lassen
+   (schadet nicht) oder entfernen:
+
+   .toolbar-group-right {
+     margin-left: auto;
+   }
+*/

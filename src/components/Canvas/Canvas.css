@@ -1,0 +1,34 @@
+/* ===== CANVAS STYLING ===== */
+/* Entspricht dem Design aus dem Prototyp */
+
+.canvas-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7fafc;
+  overflow: auto;
+}
+
+.canvas-svg {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Knoten-Label Styling */
+.node-label {
+  font-family: 'Times New Roman', serif;
+  font-size: 16px;
+  font-style: italic;
+  user-select: none;  /* Verhindert Textauswahl beim Ziehen */
+}
+
+/* Plate-Label Styling */
+.plate-label {
+  font-family: -apple-system, sans-serif;
+  font-size: 12px;
+  fill: #4a5568;
+}

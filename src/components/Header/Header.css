@@ -1,0 +1,37 @@
+/* ===== HEADER STYLING ===== */
+/* Professionelles Design mit Lucide Icons */
+
+.header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  color: #3b82f6;
+}
+
+.header-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.3px;
+}
+
+.header-project-name {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-weight: 500;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}

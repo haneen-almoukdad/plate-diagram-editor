@@ -1,0 +1,121 @@
+/* ===== STATEMENT PANEL ===== */
+/* Horizontales Panel unten für die Übersicht aller Statements */
+
+.statement-panel {
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  max-height: 120px;
+}
+
+/* ----- HEADER ----- */
+.statement-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.statement-panel-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statement-panel-icon {
+  color: #64748b;
+}
+
+.statement-panel-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statement-count {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3b82f6;
+  background-color: #eff6ff;
+  border-radius: 10px;
+}
+
+/* ----- KOPIER-BUTTON ----- */
+.statement-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.statement-copy-btn:hover {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.statement-copy-btn.copied {
+  background-color: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+/* ----- STATEMENT-LISTE ----- */
+.statement-list-container {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 16px;
+}
+
+.statement-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.statement-item {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #1e293b;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.statement-item:hover {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+/* ----- LEER-ZUSTAND ----- */
+.statement-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 0 20px;
+}
