@@ -1,8 +1,8 @@
 /* ===== SIDEBAR STYLING ===== */
-/* Professionelles Design mit Lucide Icons */
+/* Design mit Lucide Icons */
 
 .sidebar {
-  width: 220px;  /* Breiter für bessere Lesbarkeit */
+  width: 220px;  
   background: #fafafa;
   border-right: 1px solid #e2e8f0;
   overflow-y: auto;
@@ -136,14 +136,3 @@
   position: relative;
 }
 
-/* ===========================================
-   HINWEIS: TOOLBAR-GROUP-RIGHT KANN ENTFERNT WERDEN
-   ===========================================
-   Da der Generate-Button entfernt wurde, brauchst du diese
-   Klasse nicht mehr. Du kannst sie in deiner CSS lassen
-   (schadet nicht) oder entfernen:
-
-   .toolbar-group-right {
-     margin-left: auto;
-   }
-*/

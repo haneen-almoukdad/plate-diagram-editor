@@ -6,14 +6,14 @@ import Plate from './Plate.tsx';
 import './Canvas.css';
 
 // ===== CANVAS KOMPONENTE =====
-// Die HauptzeichenflÃ¤che, auf der das Plate-Diagramm dargestellt wird.
-// UnterstÃ¼tzt: Erstellen, AuswÃ¤hlen, Ziehen, Resize und Rechteck-Auswahl
+// Die Hauptzeichenfläche, auf der das Plate-Diagramm dargestellt wird.
+// Unterstützt: Erstellen, Auswählen, Ziehen, Resize und Rechteck-Auswahl
 
 interface CanvasProps {
   nodes: DiagramNode[];
   edges: DiagramEdge[];
   plates: DiagramPlate[];
-  selectedElementIds: string[];  // GEÄNDERT: Array statt einzelne ID
+  selectedElementIds: string[];  
   selectedTool: ToolType;
   zoomLevel: number;
   onSelectElement: (id: string | null) => void;  // Für Einzelauswahl
@@ -23,7 +23,7 @@ interface CanvasProps {
   onAddNode: (node: DiagramNode) => void;
   onAddPlate: (plate: DiagramPlate) => void;
   onAddEdge: (edge: DiagramEdge) => void;
-  svgRef?: React.RefObject<SVGSVGElement>;  // NEU: Optionale externe SVG-Referenz für Export
+  svgRef?: React.RefObject<SVGSVGElement>;  
 }
 
 const Canvas: React.FC<CanvasProps> = ({
@@ -40,30 +40,30 @@ const Canvas: React.FC<CanvasProps> = ({
   onAddNode,
   onAddPlate,
   onAddEdge,
-  svgRef: externalSvgRef,  // NEU: Externe Ref umbenennen
+  svgRef: externalSvgRef,  
 }) => {
   // Referenz zum SVG-Element für Koordinatenberechnung
   // Verwendet externe Ref wenn vorhanden, sonst interne
   const internalSvgRef = useRef<SVGSVGElement>(null);
   const svgRef = externalSvgRef || internalSvgRef;
   
-  // ===== ZUSTAND FÃœR DRAG-OPERATIONEN =====
+  // ===== ZUSTAND FüR DRAG-OPERATIONEN =====
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
   const [dragElementId, setDragElementId] = useState<string | null>(null);
   
-  // ===== ZUSTAND FÃœR KANTEN-ERSTELLUNG =====
+  // ===== ZUSTAND FüR KANTEN-ERSTELLUNG =====
   const [edgeStartNodeId, setEdgeStartNodeId] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
-  // ===== ZUSTAND FÃœR PLATE-RESIZE =====
+  // ===== ZUSTAND FüR PLATE-RESIZE =====
   const [isResizing, setIsResizing] = useState(false);
   const [resizePlateId, setResizePlateId] = useState<string | null>(null);
   const [resizeCorner, setResizeCorner] = useState<string | null>(null);
   const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
   const [resizeStartPlate, setResizeStartPlate] = useState<DiagramPlate | null>(null);
   
-  // ===== NEU: ZUSTAND FÃœR RECHTECK-AUSWAHL =====
+  // ===== ZUSTAND FüR RECHTECK-AUSWAHL =====
   // Speichert ob gerade ein Auswahlrechteck aufgezogen wird
   const [isSelecting, setIsSelecting] = useState(false);
   // Startpunkt des Auswahlrechtecks
@@ -71,11 +71,11 @@ const Canvas: React.FC<CanvasProps> = ({
   // Aktueller Endpunkt des Auswahlrechtecks (folgt der Maus)
   const [selectionEnd, setSelectionEnd] = useState({ x: 0, y: 0 });
   
-  // Minimale GrÃ¶ÃŸe fÃ¼r Plates
+  // Minimale Größe für Plates
   const MIN_PLATE_WIDTH = 60;
   const MIN_PLATE_HEIGHT = 40;
   
-  // Hilfsvariable fÃ¼r Select-Modus
+  // Hilfsvariable für Select-Modus
   const isSelectMode = selectedTool === 'select';
 
   // ----- HILFSFUNKTIONEN -----
@@ -100,7 +100,7 @@ const Canvas: React.FC<CanvasProps> = ({
 
   // ===== NEU: Berechnet das normalisierte Auswahlrechteck =====
   // Normalisiert bedeutet: x,y ist immer oben-links, width/height sind positiv
-  // Das ist nÃ¶tig, weil der User das Rechteck in jede Richtung ziehen kann
+  // Das ist nötig, weil der User das Rechteck in jede Richtung ziehen kann
   const getSelectionRect = () => {
     const x = Math.min(selectionStart.x, selectionEnd.x);
     const y = Math.min(selectionStart.y, selectionEnd.y);
@@ -109,7 +109,7 @@ const Canvas: React.FC<CanvasProps> = ({
     return { x, y, width, height };
   };
 
-  // ===== NEU: PrÃ¼ft ob ein Punkt innerhalb eines Rechtecks liegt =====
+  // ===== NEU: Prüft ob ein Punkt innerhalb eines Rechtecks liegt =====
   const isPointInRect = (
     px: number, 
     py: number, 
@@ -123,7 +123,7 @@ const Canvas: React.FC<CanvasProps> = ({
     );
   };
 
-  // ===== NEU: PrÃ¼ft ob ein Rechteck (Plate) das Auswahlrechteck Ã¼berlappt =====
+  // ===== NEU: Pröft ob ein Rechteck (Plate) das Auswahlrechteck Überlappt =====
   const doRectsOverlap = (
     rect1: { x: number; y: number; width: number; height: number },
     rect2: { x: number; y: number; width: number; height: number }
@@ -141,12 +141,12 @@ const Canvas: React.FC<CanvasProps> = ({
     const rect = getSelectionRect();
     const selectedIds: string[] = [];
 
-    // PrÃ¼fe alle Knoten
+    // Prüfe alle Knoten
     nodes.forEach(node => {
       // Knoten hat einen Radius von 22 (aus Node.tsx)
       const nodeRadius = 22;
-      // PrÃ¼fe ob der Mittelpunkt des Knotens im Rechteck liegt
-      // ODER ob der Knoten das Rechteck Ã¼berlappt
+      // Prüfe ob der Mittelpunkt des Knotens im Rechteck liegt
+      // ODER ob der Knoten das Rechteck überlappt
       const nodeRect = {
         x: node.x - nodeRadius,
         y: node.y - nodeRadius,
@@ -171,8 +171,8 @@ const Canvas: React.FC<CanvasProps> = ({
       }
     });
 
-    // PrÃ¼fe alle Kanten
-    // Eine Kante wird ausgewÃ¤hlt, wenn BEIDE verbundenen Knoten ausgewÃ¤hlt sind
+    // Prüfe alle Kanten
+    // Eine Kante wird ausgewählt, wenn BEIDE verbundenen Knoten ausgewählt sind
     // ODER wenn die Linie das Auswahlrechteck schneidet
     edges.forEach(edge => {
       const fromNode = nodes.find(n => n.id === edge.fromNodeId);
@@ -269,7 +269,7 @@ const Canvas: React.FC<CanvasProps> = ({
     // Nur im Select-Modus und nur wenn direkt auf Canvas geklickt
     if (!isSelectMode) return;
     
-    // PrÃ¼fe ob auf ein Element geklickt wurde (dann nicht Rechteck starten)
+    // Prüfe ob auf ein Element geklickt wurde (dann nicht Rechteck starten)
     const target = e.target as SVGElement;
     if (target.tagName !== 'rect' || !target.classList.contains('canvas-background')) {
       // Wenn auf den weiÃŸen Hintergrund geklickt wurde
@@ -283,7 +283,7 @@ const Canvas: React.FC<CanvasProps> = ({
     }
   };
 
-  // Handler fÃ¼r Klick auf einen Knoten (fÃ¼r Edge-Erstellung)
+  // Handler für Klick auf einen Knoten (für Edge-Erstellung)
   const handleNodeClick = (nodeId: string) => {
     if (selectedTool === 'edge') {
       if (edgeStartNodeId === null) {
@@ -314,7 +314,7 @@ const Canvas: React.FC<CanvasProps> = ({
     }
   };
 
-  // Drag-Start fÃ¼r Knoten
+  // Drag-Start für Knoten
   const handleNodeDragStart = (nodeId: string, e: React.MouseEvent) => {
     if (selectedTool === 'edge') return;
     if (selectedTool !== 'select') return;
@@ -324,7 +324,7 @@ const Canvas: React.FC<CanvasProps> = ({
     setDragStartPos(getMousePosition(e));
   };
 
-  // Drag-Start fÃ¼r Plates
+  // Drag-Start für Plates
   const handlePlateDragStart = (plateId: string, e: React.MouseEvent) => {
     if (!isSelectMode) return;
     
@@ -333,7 +333,7 @@ const Canvas: React.FC<CanvasProps> = ({
     setDragStartPos(getMousePosition(e));
   };
 
-  // Resize-Start fÃ¼r Plates
+  // Resize-Start für Plates
   const handlePlateResizeStart = (plateId: string, corner: string, e: React.MouseEvent) => {
     if (!isSelectMode) {
       console.log('Resize nicht möglich - bitte Select-Tool auswählen');
@@ -361,7 +361,7 @@ const Canvas: React.FC<CanvasProps> = ({
     // ===== RECHTECK-AUSWAHL =====
     if (isSelecting) {
       setSelectionEnd(pos);
-      return;  // Andere Interaktionen wÃ¤hrend Auswahl ignorieren
+      return;  // Andere Interaktionen während Auswahl ignorieren
     }
     
     // Kanten-Vorschau
@@ -452,7 +452,7 @@ const Canvas: React.FC<CanvasProps> = ({
       // Finde alle Elemente im Auswahlrechteck
       const selectedIds = getElementsInSelectionRect();
       
-      // PrÃ¼fe ob das Rechteck groÃŸ genug war (nicht nur ein Klick)
+      // Prüfe ob das Rechteck groß genug war (nicht nur ein Klick)
       const rect = getSelectionRect();
       if (rect.width > 5 || rect.height > 5) {
         // Setze die Auswahl
@@ -485,7 +485,7 @@ const Canvas: React.FC<CanvasProps> = ({
   
   const edgeStartNode = edgeStartNodeId ? getNodeById(edgeStartNodeId) : null;
   
-  // Berechne das Auswahlrechteck fÃ¼r die Darstellung
+  // Berechne das Auswahlrechteck für die Darstellung
   const selectionRect = getSelectionRect();
 
   return (
@@ -577,7 +577,7 @@ const Canvas: React.FC<CanvasProps> = ({
           );
         })}
         
-        {/* ===== VORSCHAU-LINIE fÃ¼r Kanten ===== */}
+        {/* ===== VORSCHAU-LINIE für Kanten ===== */}
         {selectedTool === 'edge' && edgeStartNode && (
           <line
             x1={edgeStartNode.x}
@@ -605,7 +605,7 @@ const Canvas: React.FC<CanvasProps> = ({
         ))}
 
         {/* ===== AUSWAHLRECHTECK ===== */}
-        {/* Wird nur angezeigt wÃ¤hrend der Rechteck-Auswahl */}
+        {/* Wird nur angezeigt während der Rechteck-Auswahl */}
         {isSelecting && (
           <rect
             x={selectionRect.x}

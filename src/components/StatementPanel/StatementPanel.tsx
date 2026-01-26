@@ -6,7 +6,6 @@ import './StatementPanel.css';
 // ===== STATEMENT PANEL KOMPONENTE =====
 // Zeigt eine Übersicht aller Sampling Statements an (unten im Editor).
 // Die Bearbeitung erfolgt im NodePropertiesPanel rechts.
-//
 // Dieses Panel ist nur für die ANZEIGE und das Kopieren.
 
 interface StatementPanelProps {

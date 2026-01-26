@@ -10,7 +10,7 @@ import { DiagramNode } from '../../types';
 interface NodeProps {
   node: DiagramNode;                           // Die Knoten-Daten
   isSelected: boolean;                         // Ist dieser Knoten ausgewählt?
-  isEdgeStart?: boolean;                       // NEU: Ist dieser Knoten der Startknoten einer neuen Kante?
+  isEdgeStart?: boolean;                       // Ist dieser Knoten der Startknoten einer neuen Kante?
   onSelect: (id: string) => void;              // Callback wenn Knoten angeklickt wird
   onDragStart: (id: string, e: React.MouseEvent) => void;  // Drag beginnt
 }
@@ -82,7 +82,7 @@ const Node: React.FC<NodeProps> = ({
       <g 
         className="node" 
         onMouseDown={handleMouseDown}
-        onClick={handleClick}  // NEU: onClick hinzugefügt!
+        onClick={handleClick}  //  onClick hinzugefügt!
         style={{ cursor: 'pointer' }}
       >
         {/* Glüh-Kreis im Hintergrund wenn Edge-Start */}
@@ -146,7 +146,7 @@ const Node: React.FC<NodeProps> = ({
     <g 
       className="node" 
       onMouseDown={handleMouseDown}
-      onClick={handleClick}  // NEU: onClick hinzugefügt!
+      onClick={handleClick}  //  onClick hinzugefügt!
       style={{ cursor: 'pointer' }}
     >
       {/* Glüh-Rechteck im Hintergrund wenn Edge-Start */}

@@ -1,5 +1,6 @@
 /* ===== HEADER STYLING ===== */
 /* Professionelles Design mit Lucide Icons */
+/* Styling für editierbaren Projektnamen */
 
 .header {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -27,11 +28,66 @@
   letter-spacing: 0.3px;
 }
 
+/* ===== EDITIERBARER PROJEKTNAME ===== */
+
+.header-project-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Button für den Projektnamen (Anzeige-Modus) */
 .header-project-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.9rem;
   color: #94a3b8;
   font-weight: 500;
-  padding: 4px 12px;
+  padding: 6px 12px;
   background: rgba(255, 255, 255, 0.1);
+  border: 1px solid transparent;
   border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.header-project-name:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+}
+
+/* Stift-Icon */
+.header-edit-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.header-project-name:hover .header-edit-icon {
+  opacity: 0.7;
+}
+
+/* Input-Feld (Edit-Modus) */
+.header-project-input {
+  font-size: 0.9rem;
+  color: white;
+  font-weight: 500;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  outline: none;
+  font-family: inherit;
+  min-width: 150px;
+  max-width: 300px;
+}
+
+.header-project-input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.header-project-input::placeholder {
+  color: #64748b;
 }

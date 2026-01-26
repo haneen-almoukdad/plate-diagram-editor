@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   FilePlus, 
-  Save, 
+  Save,
+  FolderOpen,  // NEU: Icon für Load
   Download,
   FileImage,
   FileCode,
@@ -25,6 +26,7 @@ import './Toolbar.css';
 interface ToolbarProps {
   onNewProject: () => void;
   onSaveAs: () => void;
+  onLoadProject: (file: File) => void;  // NEU: Callback für Laden
   onZoomIn: () => void;
   onZoomOut: () => void;
   onUndo: () => void;
@@ -45,6 +47,7 @@ const ICON_SIZE = 18;
 const Toolbar: React.FC<ToolbarProps> = ({
   onNewProject,
   onSaveAs,
+  onLoadProject,  // NEU
   onZoomIn,
   onZoomOut,
   onUndo,
@@ -61,6 +64,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
 }) => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // NEU: Referenz zum versteckten File-Input
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,17 +81,46 @@ const Toolbar: React.FC<ToolbarProps> = ({
     };
   }, []);
 
+  // NEU: Handler für Datei-Auswahl
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onLoadProject(file);
+    }
+    // Reset input, damit dieselbe Datei erneut geladen werden kann
+    event.target.value = '';
+  };
+
+  // NEU: Öffnet den Datei-Dialog
+  const handleLoadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <nav className="toolbar">
+      {/* Versteckter File-Input für JSON-Import */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".json"
+        style={{ display: 'none' }}
+      />
+
       {/* Projekt-Operationen */}
       <div className="toolbar-group">
         <button className="toolbar-btn" onClick={onNewProject} title="Neues Projekt erstellen">
           <FilePlus size={ICON_SIZE} />
-          <span className="toolbar-btn-text">New Project</span>
+          <span className="toolbar-btn-text">New</span>
         </button>
         <button className="toolbar-btn" onClick={onSaveAs} title="Projekt speichern (JSON)">
           <Save size={ICON_SIZE} />
           <span className="toolbar-btn-text">Save</span>
+        </button>
+        {/* NEU: Load Button */}
+        <button className="toolbar-btn" onClick={handleLoadClick} title="Projekt laden (JSON)">
+          <FolderOpen size={ICON_SIZE} />
+          <span className="toolbar-btn-text">Load</span>
         </button>
       </div>
 

@@ -1,5 +1,5 @@
 /* ===== GLOBALES STYLING FÜR DIE APP ===== */
-/* Neues Layout mit Properties Panel rechts und Statements unten */
+
 
 /* Reset und Basis */
 * {
@@ -14,23 +14,7 @@ body {
 }
 
 /* ===== HAUPT-LAYOUT ===== */
-/*
-  Struktur:
-  ┌─────────────────────────────────────────────────────────────┐
-  │ Header                                                       │
-  ├─────────────────────────────────────────────────────────────┤
-  │ Toolbar                                                      │
-  ├──────────┬──────────────────────────────────────────────────┤
-  │          │  editor-content                                   │
-  │          │  ┌─────────────────────────┬────────────────────┐│
-  │ Sidebar  │  │                         │ Properties Panel   ││
-  │          │  │       Canvas            │ (rechts)           ││
-  │          │  │                         │                    ││
-  │          │  ├─────────────────────────┴────────────────────┤│
-  │          │  │ Statement Panel (unten)                       ││
-  │          │  └──────────────────────────────────────────────┘│
-  └──────────┴──────────────────────────────────────────────────┘
-*/
+
 
 .plate-diagram-editor {
   display: flex;
@@ -55,7 +39,7 @@ body {
   overflow: hidden;
 }
 
-/* NEU: Der obere Bereich mit Canvas und Properties Panel nebeneinander */
+/* Der obere Bereich mit Canvas und Properties Panel nebeneinander */
 .editor-workspace {
   flex: 1;
   display: flex;

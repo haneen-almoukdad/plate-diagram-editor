@@ -102,6 +102,14 @@ function App() {
     }
   }, []);
 
+  // ===== NEU: PROJEKTNAME ÄNDERN =====
+  const handleProjectNameChange = useCallback((newName: string) => {
+    setDiagramState(prev => ({
+      ...prev,
+      projectName: newName,
+    }));
+  }, []);
+
   const handleSaveAs = useCallback(() => {
     const jsonString = JSON.stringify(diagramState, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -114,6 +122,66 @@ function App() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }, [diagramState]);
+
+  // ===== NEU: PROJEKT LADEN =====
+  // Diese Funktion lädt eine JSON-Datei und stellt das Diagramm wieder her.
+  // Sie enthält Fehlerbehandlung für ungültige Dateien.
+  const handleLoadProject = useCallback((file: File) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const loadedData = JSON.parse(content);
+        
+        // ===== VALIDIERUNG =====
+        // Prüfe ob die wichtigsten Felder vorhanden sind
+        if (!loadedData.nodes || !Array.isArray(loadedData.nodes)) {
+          throw new Error('Ungültige Datei: "nodes" fehlt oder ist kein Array.');
+        }
+        if (!loadedData.edges || !Array.isArray(loadedData.edges)) {
+          throw new Error('Ungültige Datei: "edges" fehlt oder ist kein Array.');
+        }
+        if (!loadedData.plates || !Array.isArray(loadedData.plates)) {
+          throw new Error('Ungültige Datei: "plates" fehlt oder ist kein Array.');
+        }
+        
+        // ===== ZUSTAND WIEDERHERSTELLEN =====
+        // Wir übernehmen nur die Diagramm-Daten, nicht die UI-Einstellungen
+        setDiagramState({
+          projectName: loadedData.projectName || 'Loaded Project',
+          nodes: loadedData.nodes,
+          edges: loadedData.edges,
+          plates: loadedData.plates,
+          // UI-Einstellungen werden zurückgesetzt
+          selectedTool: 'select',
+          selectedElementIds: [],
+          zoomLevel: loadedData.zoomLevel || 1,
+        });
+        
+        console.log('Projekt erfolgreich geladen:', loadedData.projectName);
+        
+      } catch (error) {
+        // ===== FEHLERBEHANDLUNG =====
+        console.error('Fehler beim Laden:', error);
+        
+        if (error instanceof SyntaxError) {
+          alert('Fehler: Die Datei enthält kein gültiges JSON.');
+        } else if (error instanceof Error) {
+          alert(`Fehler beim Laden: ${error.message}`);
+        } else {
+          alert('Ein unbekannter Fehler ist aufgetreten.');
+        }
+      }
+    };
+    
+    reader.onerror = () => {
+      alert('Fehler beim Lesen der Datei.');
+    };
+    
+    // Datei als Text lesen
+    reader.readAsText(file);
+  }, []);
 
   const handleExportPng = useCallback(async () => {
     if (!svgRef.current) {
@@ -227,12 +295,16 @@ function App() {
   return (
     <div className="plate-diagram-editor">
       {/* Header */}
-      <Header projectName={diagramState.projectName} />
+      <Header 
+        projectName={diagramState.projectName} 
+        onProjectNameChange={handleProjectNameChange}
+      />
       
       {/* Toolbar */}
       <Toolbar
         onNewProject={handleNewProject}
         onSaveAs={handleSaveAs}
+        onLoadProject={handleLoadProject}  // NEU: Load-Funktion übergeben
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onUndo={handleUndo}

@@ -9,7 +9,7 @@ import { DiagramPlate } from '../../types';
 interface PlateProps {
   plate: DiagramPlate;                         // Die Plate-Daten
   isSelected: boolean;                         // Ist dieses Plate ausgewählt?
-  isSelectMode: boolean;                       // NEU: Ist das Select-Tool aktiv?
+  isSelectMode: boolean;                       // Ist das Select-Tool aktiv?
   onSelect: (id: string) => void;              // Callback wenn Plate angeklickt wird
   onDragStart: (id: string, e: React.MouseEvent) => void;  // Drag beginnt
   onResizeStart: (id: string, corner: string, e: React.MouseEvent) => void;  // Resize beginnt
@@ -18,7 +18,7 @@ interface PlateProps {
 const Plate: React.FC<PlateProps> = ({ 
   plate, 
   isSelected,
-  isSelectMode,  // NEU: Destrukturieren der neuen Prop
+  isSelectMode,  
   onSelect, 
   onDragStart,
   onResizeStart 
@@ -61,7 +61,7 @@ const Plate: React.FC<PlateProps> = ({
   // Größe der Resize-Handles (die kleinen Quadrate an den Ecken)
   const handleSize = 8;
   
-  // NEU: Resize-Handles werden nur angezeigt wenn:
+  // Resize-Handles werden nur angezeigt wenn:
   // 1. Das Plate ausgewählt ist UND
   // 2. Das Select-Tool aktiv ist
   const showResizeHandles = isSelected && isSelectMode;

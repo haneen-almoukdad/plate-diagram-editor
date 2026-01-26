@@ -14,7 +14,7 @@ export type ExportFormat = 'png' | 'svg';
 
 interface ExportOptions {
   format: ExportFormat;
-  includeStatements: boolean;  // Sollen Sampling Statements mit exportiert werden?
+  includeStatements: boolean;  // Sollen Sampling Statements mit exportiert werden
   backgroundColor: string;      // Hintergrundfarbe (z.B. 'white' oder 'transparent')
   scale: number;               // Skalierungsfaktor für PNG (z.B. 2 für höhere Auflösung)
 }
@@ -146,7 +146,6 @@ function createExportSVG(
   }
   
   // ===== KORRIGIERT: Klone alle Plates, Edges und Nodes =====
-  // WICHTIG: Die Klasse heißt "plate", nicht "plate-group"!
   // Wir suchen jetzt nach:
   // - .plate (für Plates)
   // - .edge (für Kanten)  
