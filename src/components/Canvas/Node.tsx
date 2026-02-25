@@ -25,18 +25,23 @@ const Node: React.FC<NodeProps> = ({
   // Größe des Knotens
   const size = 22;  // Radius für Kreise, halbe Breite für Quadrate
   
-  // Farben basierend auf Knoten-Typ
-  const getFillColor = (): string => {
+  // ===== FÜLLFARBE =====
+  // Priorität: 1. Benutzerdefinierte Farbe (node.fillColor)
+  //            2. Lee & Wagenmakers Konvention (typ-basiert)
+  //
+  // Lee & Wagenmakers (2013) Konventionen:
+  //   Observed     → grau gefüllt (schattiert)
+  //   Unobserved   → weiß / leer
+  //   Deterministic → weiß / leer (doppelter Rand signalisiert den Typ)
+  const getDefaultFillColor = (): string => {
     switch (node.type) {
-      case 'observed':
-        return '#a0aec0';  // Grau gefüllt
-      case 'unobserved':
-      case 'deterministic':
-        return 'white';    // Weiß/leer
-      default:
-        return 'white';
+      case 'observed':      return '#a0aec0';  // Grau (schattiert) nach Konvention
+      case 'unobserved':    return 'white';     // Leer nach Konvention
+      case 'deterministic': return 'white';     // Leer nach Konvention
+      default:              return 'white';
     }
   };
+  const fillColor = node.fillColor ?? getDefaultFillColor();
 
   // ===== Dynamische Styling basierend auf Zustand =====
   // Priorität: isEdgeStart > isSelected > normal
@@ -45,14 +50,13 @@ const Node: React.FC<NodeProps> = ({
   // Strichstärke - Edge-Start und ausgewählte Knoten haben dickeren Rand
   const strokeWidth = (isEdgeStart || isSelected) ? 3 : 2;
   
-  // Rahmenfarbe:
-  // - Grün wenn Startknoten für Kante (zeigt "bereit für Verbindung")
-  // - Blau wenn ausgewählt
-  // - Grau sonst
+  // ===== RAHMENFARBE =====
+  // Nach Lee & Wagenmakers: immer schwarz/dunkelgrau – keine Benutzerdefinition.
+  // Ausnahme: isEdgeStart (grün) und isSelected (blau) für UI-Feedback.
   const getStrokeColor = (): string => {
-    if (isEdgeStart) return '#48bb78';  // Grün für Edge-Start
-    if (isSelected) return '#4299e1';   // Blau für Selektion
-    return '#4a5568';                    // Grau normal
+    if (isEdgeStart) return '#48bb78';
+    if (isSelected)  return '#4299e1';
+    return '#4a5568';
   };
   const strokeColor = getStrokeColor();
 
@@ -104,7 +108,7 @@ const Node: React.FC<NodeProps> = ({
           cx={node.x}
           cy={node.y}
           r={size}
-          fill={getFillColor()}
+          fill={fillColor}
           stroke={strokeColor}
           strokeWidth={strokeWidth}
         />
@@ -170,7 +174,7 @@ const Node: React.FC<NodeProps> = ({
         y={node.y - size}
         width={size * 2}
         height={size * 2}
-        fill={getFillColor()}
+        fill={fillColor}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
       />

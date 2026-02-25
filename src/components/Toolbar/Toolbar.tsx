@@ -31,6 +31,8 @@ interface ToolbarProps {
   onZoomOut: () => void;
   onUndo: () => void;
   onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
   onDelete: () => void;
   onAutoLayout: () => void;
   onExportPng: () => void;
@@ -52,6 +54,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onZoomOut,
   onUndo,
   onRedo,
+  canUndo,
+  canRedo,
   onDelete,
   onAutoLayout,
   onExportPng,
@@ -183,10 +187,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
       {/* Bearbeitung: Undo, Redo, Delete */}
       <div className="toolbar-group">
-        <button className="toolbar-btn icon-only" onClick={onUndo} title="Rückgängig (Ctrl+Z)">
+        <button className="toolbar-btn icon-only" onClick={onUndo} disabled={!canUndo} title="Rückgängig (Ctrl+Z)">
           <Undo2 size={ICON_SIZE} />
         </button>
-        <button className="toolbar-btn icon-only" onClick={onRedo} title="Wiederherstellen (Ctrl+Y)">
+        <button className="toolbar-btn icon-only" onClick={onRedo} disabled={!canRedo} title="Wiederherstellen (Ctrl+Y)">
           <Redo2 size={ICON_SIZE} />
         </button>
         <button className="toolbar-btn icon-only delete" onClick={onDelete} title="Löschen (Delete)">

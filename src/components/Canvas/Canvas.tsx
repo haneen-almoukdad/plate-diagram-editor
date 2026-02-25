@@ -16,13 +16,18 @@ interface CanvasProps {
   selectedElementIds: string[];  
   selectedTool: ToolType;
   zoomLevel: number;
-  onSelectElement: (id: string | null) => void;  // Für Einzelauswahl
-  onSelectMultipleElements: (ids: string[]) => void;  // Für Mehrfachauswahl
+  onSelectElement: (id: string | null) => void;
   onUpdateNode: (id: string, updates: Partial<DiagramNode>) => void;
+  // Silent: nur Position aktualisieren, KEIN History-Eintrag (während des Ziehens)
+  onUpdateNodeSilent: (id: string, updates: Partial<DiagramNode>) => void;
   onUpdatePlate: (id: string, updates: Partial<DiagramPlate>) => void;
+  // Silent: nur Position/Größe aktualisieren, KEIN History-Eintrag (während des Ziehens)
+  onUpdatePlateSilent: (id: string, updates: Partial<DiagramPlate>) => void;
   onAddNode: (node: DiagramNode) => void;
   onAddPlate: (plate: DiagramPlate) => void;
   onAddEdge: (edge: DiagramEdge) => void;
+  // Wird aufgerufen wenn Drag oder Resize beendet wird UND das Element sich wirklich bewegt hat
+  onDragEnd: () => void;
   svgRef?: React.RefObject<SVGSVGElement>;  
 }
 
@@ -34,269 +39,201 @@ const Canvas: React.FC<CanvasProps> = ({
   selectedTool,
   zoomLevel,
   onSelectElement,
-  onSelectMultipleElements,
   onUpdateNode,
+  onUpdateNodeSilent,
   onUpdatePlate,
+  onUpdatePlateSilent,
   onAddNode,
   onAddPlate,
   onAddEdge,
+  onDragEnd,
   svgRef: externalSvgRef,  
 }) => {
-  // Referenz zum SVG-Element für Koordinatenberechnung
-  // Verwendet externe Ref wenn vorhanden, sonst interne
   const internalSvgRef = useRef<SVGSVGElement>(null);
   const svgRef = externalSvgRef || internalSvgRef;
   
-  // ===== ZUSTAND FüR DRAG-OPERATIONEN =====
+  // ===== ZUSTAND FÜR DRAG-OPERATIONEN =====
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
   const [dragElementId, setDragElementId] = useState<string | null>(null);
+  // hasMoved: wird true sobald sich das Element wirklich bewegt hat.
+  // Verhindert leere History-Einträge bei einem einfachen Klick ohne Ziehen.
+  const hasMoved = useRef(false);
+  // isDraggingRef: synchroner Guard gegen doppeltes Event-Feuern auf überlappenden SVG-Elementen.
+  // isDragging (State) ist beim zweiten Event-Aufruf im selben Frame noch false → reicht nicht.
+  const isDraggingRef = useRef(false);
+
+  // ===== STARTPOSITIONEN FÜR PLATE-DRAG =====
+  // Beim Drag-Start werden die Ausgangspositionen ALLER betroffenen Elemente
+  // einmalig gespeichert. handleMouseMove rechnet dann immer:
+  //   neuePosition = startPosition + (aktuellerMausort - dragStartPos)
+  // Das ist stabiler als frame-by-frame Delta, weil kein Floating-Point-Fehler
+  // oder React-Batching-Problem akkumuliert werden kann.
+  const dragStartNodes = useRef<Map<string, { x: number; y: number }>>(new Map());
+  const dragStartPlates = useRef<Map<string, { x: number; y: number }>>(new Map());
   
-  // ===== ZUSTAND FüR KANTEN-ERSTELLUNG =====
+  // ===== ZUSTAND FÜR KANTEN-ERSTELLUNG =====
   const [edgeStartNodeId, setEdgeStartNodeId] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
-  // ===== ZUSTAND FüR PLATE-RESIZE =====
+  // ===== ZUSTAND FÜR PLATE-RESIZE =====
   const [isResizing, setIsResizing] = useState(false);
   const [resizePlateId, setResizePlateId] = useState<string | null>(null);
   const [resizeCorner, setResizeCorner] = useState<string | null>(null);
   const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
   const [resizeStartPlate, setResizeStartPlate] = useState<DiagramPlate | null>(null);
   
-  // ===== ZUSTAND FüR RECHTECK-AUSWAHL =====
-  // Speichert ob gerade ein Auswahlrechteck aufgezogen wird
-  const [isSelecting, setIsSelecting] = useState(false);
-  // Startpunkt des Auswahlrechtecks
-  const [selectionStart, setSelectionStart] = useState({ x: 0, y: 0 });
-  // Aktueller Endpunkt des Auswahlrechtecks (folgt der Maus)
-  const [selectionEnd, setSelectionEnd] = useState({ x: 0, y: 0 });
   
-  // Minimale Größe für Plates
   const MIN_PLATE_WIDTH = 60;
   const MIN_PLATE_HEIGHT = 40;
   
-  // Hilfsvariable für Select-Modus
   const isSelectMode = selectedTool === 'select';
 
   // ----- HILFSFUNKTIONEN -----
   
-  // Konvertiert Maus-Koordinaten zu SVG-Koordinaten
+  // ===== EBENEN-HILFSFUNKTIONEN =====
+  
+  /**
+   * Berechnet die Verschachtelungstiefe einer Plate.
+   * Tiefe 0 = äußerste Plate (kein parentPlateId)
+   * Tiefe 1 = eine Ebene tiefer, Tiefe 2 = zwei Ebenen tiefer, usw.
+   */
+  const getPlateDepth = useCallback((plateId: string, allPlates: DiagramPlate[]): number => {
+    const plate = allPlates.find(p => p.id === plateId);
+    if (!plate || !plate.parentPlateId) return 0;
+    return 1 + getPlateDepth(plate.parentPlateId, allPlates);
+  }, []);
+
+  /**
+   * Findet die innerste Plate, die einen bestimmten Punkt enthält.
+   * Wird verwendet, wenn ein neuer Knoten platziert wird.
+   * Gibt die plateId zurück oder null wenn kein Plate den Punkt enthält.
+   */
+  const findInnermostPlateAtPoint = useCallback((
+    px: number, py: number, allPlates: DiagramPlate[], excludeId?: string
+  ): string | null => {
+    const candidates = allPlates.filter(p => {
+      if (excludeId && p.id === excludeId) return false;
+      return px >= p.x && px <= p.x + p.width && py >= p.y && py <= p.y + p.height;
+    });
+    if (candidates.length === 0) return null;
+    // Die tiefste (innerste) Plate wählen
+    return candidates.reduce((deepest, p) => {
+      return getPlateDepth(p.id, allPlates) >= getPlateDepth(deepest.id, allPlates) ? p : deepest;
+    }).id;
+  }, [getPlateDepth]);
+
+  /**
+   * Findet die innerste Plate, die eine neue Plate vollständig enthält.
+   * Wird verwendet, wenn ein neues Plate platziert wird → parentPlateId setzen.
+   * Gibt die parentPlateId zurück oder null wenn keine enthaltende Plate gefunden wird.
+   */
+  const findParentPlateForNewPlate = useCallback((
+    newX: number, newY: number, newWidth: number, newHeight: number,
+    allPlates: DiagramPlate[], excludeId?: string
+  ): string | null => {
+    // Eine Plate wird als "enthaltend" betrachtet wenn sie das Zentrum des neuen Plates enthält.
+    // (Vollständige Enthaltung wäre zu streng für die UX)
+    const centerX = newX + newWidth / 2;
+    const centerY = newY + newHeight / 2;
+    return findInnermostPlateAtPoint(centerX, centerY, allPlates, excludeId);
+  }, [findInnermostPlateAtPoint]);
+
+  /**
+   * Sammelt rekursiv alle Nachkommen (child Plates + deren children) einer Plate.
+   */
+  const getDescendantPlateIds = useCallback((plateId: string, allPlates: DiagramPlate[]): string[] => {
+    const directChildren = allPlates.filter(p => p.parentPlateId === plateId).map(p => p.id);
+    const allDescendants = [...directChildren];
+    directChildren.forEach(childId => {
+      allDescendants.push(...getDescendantPlateIds(childId, allPlates));
+    });
+    return allDescendants;
+  }, []);
+
   const getMousePosition = useCallback((e: React.MouseEvent): { x: number; y: number } => {
     if (!svgRef.current) return { x: 0, y: 0 };
-    
     const svg = svgRef.current;
     const rect = svg.getBoundingClientRect();
-    
-    const x = (e.clientX - rect.left) / zoomLevel;
-    const y = (e.clientY - rect.top) / zoomLevel;
-    
+    // SVG nimmt 100% der Container-Breite ein, viewBox skaliert mit zoomLevel.
+    // Mausposition muss in SVG-Koordinaten umgerechnet werden:
+    // SVG-Koordinate = Mausposition_relativ / (renderedSize / viewBoxSize)
+    const scaleX = rect.width  / (800 / zoomLevel);
+    const scaleY = rect.height / (600 / zoomLevel);
+    const x = (e.clientX - rect.left) / scaleX;
+    const y = (e.clientY - rect.top)  / scaleY;
     return { x, y };
   }, [zoomLevel]);
 
-  // Generiert eine eindeutige ID
   const generateId = (prefix: string): string => {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  // ===== NEU: Berechnet das normalisierte Auswahlrechteck =====
-  // Normalisiert bedeutet: x,y ist immer oben-links, width/height sind positiv
-  // Das ist nötig, weil der User das Rechteck in jede Richtung ziehen kann
-  const getSelectionRect = () => {
-    const x = Math.min(selectionStart.x, selectionEnd.x);
-    const y = Math.min(selectionStart.y, selectionEnd.y);
-    const width = Math.abs(selectionEnd.x - selectionStart.x);
-    const height = Math.abs(selectionEnd.y - selectionStart.y);
-    return { x, y, width, height };
-  };
-
-  // ===== NEU: Prüft ob ein Punkt innerhalb eines Rechtecks liegt =====
-  const isPointInRect = (
-    px: number, 
-    py: number, 
-    rect: { x: number; y: number; width: number; height: number }
-  ): boolean => {
-    return (
-      px >= rect.x &&
-      px <= rect.x + rect.width &&
-      py >= rect.y &&
-      py <= rect.y + rect.height
-    );
-  };
-
-  // ===== NEU: Pröft ob ein Rechteck (Plate) das Auswahlrechteck Überlappt =====
-  const doRectsOverlap = (
-    rect1: { x: number; y: number; width: number; height: number },
-    rect2: { x: number; y: number; width: number; height: number }
-  ): boolean => {
-    return !(
-      rect1.x + rect1.width < rect2.x ||
-      rect2.x + rect2.width < rect1.x ||
-      rect1.y + rect1.height < rect2.y ||
-      rect2.y + rect2.height < rect1.y
-    );
-  };
-
-  // ===== NEU: Findet alle Elemente innerhalb des Auswahlrechtecks =====
-  const getElementsInSelectionRect = (): string[] => {
-    const rect = getSelectionRect();
-    const selectedIds: string[] = [];
-
-    // Prüfe alle Knoten
-    nodes.forEach(node => {
-      // Knoten hat einen Radius von 22 (aus Node.tsx)
-      const nodeRadius = 22;
-      // Prüfe ob der Mittelpunkt des Knotens im Rechteck liegt
-      // ODER ob der Knoten das Rechteck überlappt
-      const nodeRect = {
-        x: node.x - nodeRadius,
-        y: node.y - nodeRadius,
-        width: nodeRadius * 2,
-        height: nodeRadius * 2,
-      };
-      if (doRectsOverlap(rect, nodeRect)) {
-        selectedIds.push(node.id);
-      }
-    });
-
-    // PrÃ¼fe alle Plates
-    plates.forEach(plate => {
-      const plateRect = {
-        x: plate.x,
-        y: plate.y,
-        width: plate.width,
-        height: plate.height,
-      };
-      if (doRectsOverlap(rect, plateRect)) {
-        selectedIds.push(plate.id);
-      }
-    });
-
-    // Prüfe alle Kanten
-    // Eine Kante wird ausgewählt, wenn BEIDE verbundenen Knoten ausgewählt sind
-    // ODER wenn die Linie das Auswahlrechteck schneidet
-    edges.forEach(edge => {
-      const fromNode = nodes.find(n => n.id === edge.fromNodeId);
-      const toNode = nodes.find(n => n.id === edge.toNodeId);
-      
-      if (fromNode && toNode) {
-        // PrÃ¼fe ob beide Endpunkte im Rechteck liegen
-        const fromInRect = isPointInRect(fromNode.x, fromNode.y, rect);
-        const toInRect = isPointInRect(toNode.x, toNode.y, rect);
-        
-        if (fromInRect && toInRect) {
-          selectedIds.push(edge.id);
-        }
-      }
-    });
-
-    return selectedIds;
-  };
-
   // ----- EVENT HANDLERS -----
 
-  // Klick auf den Canvas (nicht auf ein Element)
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // Wenn gerade eine Rechteck-Auswahl beendet wurde, nicht weiter verarbeiten
-    if (isSelecting) return;
-    
     const pos = getMousePosition(e);
     
-    // Edge-Tool Behandlung
     if (selectedTool === 'edge') {
-      if (edgeStartNodeId !== null) {
-        setEdgeStartNodeId(null);
-        console.log('Kanten-Erstellung abgebrochen');
-      }
+      if (edgeStartNodeId !== null) setEdgeStartNodeId(null);
       return;
     }
     
-    // Node-Tools: Erstelle neuen Knoten
     if (selectedTool.startsWith('node-')) {
       let nodeType: 'observed' | 'unobserved' | 'deterministic' = 'unobserved';
       let nodeShape: 'circle' | 'square' = 'circle';
       
       switch (selectedTool) {
-        case 'node-observed':
-          nodeType = 'observed';
-          break;
-        case 'node-unobserved':
-          nodeType = 'unobserved';
-          break;
-        case 'node-deterministic':
-          nodeType = 'deterministic';
-          break;
-        case 'node-square':
-          nodeShape = 'square';
-          break;
+        case 'node-observed':    nodeType = 'observed'; break;
+        case 'node-unobserved':  nodeType = 'unobserved'; break;
+        case 'node-deterministic': nodeType = 'deterministic'; break;
+        case 'node-square':      nodeShape = 'square'; break;
       }
       
       const newNode: DiagramNode = {
         id: generateId('node'),
-        x: pos.x,
-        y: pos.y,
+        x: pos.x, y: pos.y,
         label: 'x',
         type: nodeType,
         shape: nodeShape,
-        samplingStatement: '',   // <-- NEU: Leerer String
-        plateId: null,
+        samplingStatement: '',
+        // Automatisch der innersten Plate zuweisen, die diesen Punkt enthält
+        plateId: findInnermostPlateAtPoint(pos.x, pos.y, plates),
       };
-
-      
       onAddNode(newNode);
       onSelectElement(newNode.id);
+
     } else if (selectedTool === 'plate') {
-      // Plate-Tool: Erstelle neues Plate
+      const newPlateX = pos.x - 75;
+      const newPlateY = pos.y - 50;
+      const newPlateW = 150;
+      const newPlateH = 100;
       const newPlate: DiagramPlate = {
         id: generateId('plate'),
-        x: pos.x - 75,
-        y: pos.y - 50,
-        width: 150,
-        height: 100,
+        x: newPlateX, y: newPlateY,
+        width: newPlateW, height: newPlateH,
         label: 'i',
-        parentPlateId: null,
+        // Automatisch der innersten enthaltenden Plate zuweisen
+        parentPlateId: findParentPlateForNewPlate(newPlateX, newPlateY, newPlateW, newPlateH, plates),
       };
-      
       onAddPlate(newPlate);
       onSelectElement(newPlate.id);
+
     } else if (selectedTool === 'select') {
-      // Select-Tool: Auswahl aufheben (nur wenn nicht gezogen wurde)
       onSelectElement(null);
     }
   };
 
-  // ===== NEU: MouseDown auf Canvas - startet Rechteck-Auswahl =====
-  const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    // Nur im Select-Modus und nur wenn direkt auf Canvas geklickt
-    if (!isSelectMode) return;
-    
-    // Prüfe ob auf ein Element geklickt wurde (dann nicht Rechteck starten)
-    const target = e.target as SVGElement;
-    if (target.tagName !== 'rect' || !target.classList.contains('canvas-background')) {
-      // Wenn auf den weiÃŸen Hintergrund geklickt wurde
-      if (target.getAttribute('width') === '100%') {
-        const pos = getMousePosition(e);
-        setIsSelecting(true);
-        setSelectionStart(pos);
-        setSelectionEnd(pos);
-        console.log('Rechteck-Auswahl gestartet bei:', pos);
-      }
-    }
-  };
-
-  // Handler für Klick auf einen Knoten (für Edge-Erstellung)
   const handleNodeClick = (nodeId: string) => {
     if (selectedTool === 'edge') {
       if (edgeStartNodeId === null) {
         setEdgeStartNodeId(nodeId);
-        console.log('Startknoten ausgewÃ¤hlt:', nodeId);
       } else if (edgeStartNodeId === nodeId) {
         setEdgeStartNodeId(null);
-        console.log('Kanten-Erstellung abgebrochen');
       } else {
         const edgeExists = edges.some(
           e => e.fromNodeId === edgeStartNodeId && e.toNodeId === nodeId
         );
-        
         if (!edgeExists) {
           const newEdge: DiagramEdge = {
             id: generateId('edge'),
@@ -305,7 +242,6 @@ const Canvas: React.FC<CanvasProps> = ({
           };
           onAddEdge(newEdge);
           onSelectElement(newEdge.id);
-          console.log('Neue Kante erstellt:', newEdge.id);
         }
         setEdgeStartNodeId(null);
       }
@@ -318,58 +254,97 @@ const Canvas: React.FC<CanvasProps> = ({
   const handleNodeDragStart = (nodeId: string, e: React.MouseEvent) => {
     if (selectedTool === 'edge') return;
     if (selectedTool !== 'select') return;
-    
+    if (isDraggingRef.current) return;
+    isDraggingRef.current = true;
+    hasMoved.current = false;
+    dragStartNodes.current = new Map();
+    dragStartPlates.current = new Map();
+    const startPos = getMousePosition(e);
+    // Startposition des Knotens selbst speichern
+    const n = nodes.find(nd => nd.id === nodeId);
+    if (n) dragStartNodes.current.set(nodeId, { x: n.x, y: n.y });
     setIsDragging(true);
     setDragElementId(nodeId);
-    setDragStartPos(getMousePosition(e));
+    setDragStartPos(startPos);
   };
 
   // Drag-Start für Plates
   const handlePlateDragStart = (plateId: string, e: React.MouseEvent) => {
     if (!isSelectMode) return;
-    
+    // ===== GUARD: Keinen zweiten Drag starten wenn bereits einer läuft =====
+    // isDraggingRef ist synchron → verhindert dass überlappende Plates beide feuern.
+    if (isDraggingRef.current) return;
+    isDraggingRef.current = true;
+    hasMoved.current = false;
+    const startPos = getMousePosition(e);
+
+    const draggedPlate = plates.find(p => p.id === plateId);
+    if (!draggedPlate) return;
+
+    // ===== STARTPOSITIONEN EINMALIG SPEICHERN =====
+    // Plate selbst + alle Plates die geometrisch INNERHALB liegen (unabhängig von parentPlateId).
+    // Das funktioniert auch für alte Plates ohne parentPlateId.
+    dragStartPlates.current = new Map();
+    dragStartPlates.current.set(plateId, { x: draggedPlate.x, y: draggedPlate.y });
+
+    plates.forEach(p => {
+      if (p.id === plateId) return;
+      // Eine Plate gilt als "innen" wenn sie VOLLSTÄNDIG im gezogenen Plate liegt.
+      // Das ist die einzig zuverlässige Prüfung:
+      // - Mittelpunkt-Prüfung schlägt fehl wenn die äußere Plate groß ist
+      //   und ihr Zentrum zufällig im Bereich der inneren Plate liegt.
+      // - Vollständige Enthaltung ist eindeutig: äußere Plates sind immer größer
+      //   und können nie vollständig in der kleineren inneren Plate liegen.
+      const fullyInside =
+        p.x            >= draggedPlate.x &&
+        p.y            >= draggedPlate.y &&
+        p.x + p.width  <= draggedPlate.x + draggedPlate.width &&
+        p.y + p.height <= draggedPlate.y + draggedPlate.height;
+      if (fullyInside) {
+        dragStartPlates.current.set(p.id, { x: p.x, y: p.y });
+      }
+    });
+
+    // Alle Knoten die geometrisch in der gezogenen Plate (oder einer inneren Plate) liegen
+    dragStartNodes.current = new Map();
+    nodes.forEach(n => {
+      const inside =
+        n.x >= draggedPlate.x && n.x <= draggedPlate.x + draggedPlate.width &&
+        n.y >= draggedPlate.y && n.y <= draggedPlate.y + draggedPlate.height;
+      if (inside) {
+        dragStartNodes.current.set(n.id, { x: n.x, y: n.y });
+      }
+    });
+
     setIsDragging(true);
     setDragElementId(plateId);
-    setDragStartPos(getMousePosition(e));
+    setDragStartPos(startPos);
   };
 
   // Resize-Start für Plates
   const handlePlateResizeStart = (plateId: string, corner: string, e: React.MouseEvent) => {
-    if (!isSelectMode) {
-      console.log('Resize nicht möglich - bitte Select-Tool auswählen');
-      return;
-    }
-    
+    if (!isSelectMode) return;
     e.stopPropagation();
-    
     const plate = plates.find(p => p.id === plateId);
     if (!plate) return;
-    
+    hasMoved.current = false; // zurücksetzen
     setIsResizing(true);
     setResizePlateId(plateId);
     setResizeCorner(corner);
     setResizeStartPos(getMousePosition(e));
     setResizeStartPlate({ ...plate });
-    
-    console.log('Resize gestartet:', plateId, 'Ecke:', corner);
   };
 
   // Mausbewegung
   const handleMouseMove = (e: React.MouseEvent) => {
     const pos = getMousePosition(e);
     
-    // ===== RECHTECK-AUSWAHL =====
-    if (isSelecting) {
-      setSelectionEnd(pos);
-      return;  // Andere Interaktionen während Auswahl ignorieren
-    }
-    
-    // Kanten-Vorschau
     if (selectedTool === 'edge' && edgeStartNodeId !== null) {
       setMousePos(pos);
     }
     
-    // Resize-Logik
+    // ===== RESIZE-LOGIK =====
+    // Verwendet onUpdatePlateSilent → KEIN History-Eintrag bei jedem Pixel!
     if (isResizing && isSelectMode && resizePlateId && resizeCorner && resizeStartPlate) {
       const deltaX = pos.x - resizeStartPos.x;
       const deltaY = pos.y - resizeStartPos.y;
@@ -387,172 +362,136 @@ const Canvas: React.FC<CanvasProps> = ({
         case 'sw':
           newWidth = Math.max(MIN_PLATE_WIDTH, resizeStartPlate.width - deltaX);
           newHeight = Math.max(MIN_PLATE_HEIGHT, resizeStartPlate.height + deltaY);
-          if (resizeStartPlate.width - deltaX >= MIN_PLATE_WIDTH) {
-            newX = resizeStartPlate.x + deltaX;
-          }
+          if (resizeStartPlate.width - deltaX >= MIN_PLATE_WIDTH) newX = resizeStartPlate.x + deltaX;
           break;
         case 'ne':
           newWidth = Math.max(MIN_PLATE_WIDTH, resizeStartPlate.width + deltaX);
           newHeight = Math.max(MIN_PLATE_HEIGHT, resizeStartPlate.height - deltaY);
-          if (resizeStartPlate.height - deltaY >= MIN_PLATE_HEIGHT) {
-            newY = resizeStartPlate.y + deltaY;
-          }
+          if (resizeStartPlate.height - deltaY >= MIN_PLATE_HEIGHT) newY = resizeStartPlate.y + deltaY;
           break;
         case 'nw':
           newWidth = Math.max(MIN_PLATE_WIDTH, resizeStartPlate.width - deltaX);
           newHeight = Math.max(MIN_PLATE_HEIGHT, resizeStartPlate.height - deltaY);
-          if (resizeStartPlate.width - deltaX >= MIN_PLATE_WIDTH) {
-            newX = resizeStartPlate.x + deltaX;
-          }
-          if (resizeStartPlate.height - deltaY >= MIN_PLATE_HEIGHT) {
-            newY = resizeStartPlate.y + deltaY;
-          }
+          if (resizeStartPlate.width - deltaX >= MIN_PLATE_WIDTH) newX = resizeStartPlate.x + deltaX;
+          if (resizeStartPlate.height - deltaY >= MIN_PLATE_HEIGHT) newY = resizeStartPlate.y + deltaY;
           break;
       }
       
-      onUpdatePlate(resizePlateId, {
-        x: newX,
-        y: newY,
-        width: newWidth,
-        height: newHeight,
-      });
-      
+      hasMoved.current = true; // tatsächliche Größenänderung
+      onUpdatePlateSilent(resizePlateId, { x: newX, y: newY, width: newWidth, height: newHeight });
       return;
     }
     
-    // Drag-Logik
+    // ===== DRAG-LOGIK =====
+    // Verwendet onUpdateNodeSilent / onUpdatePlateSilent → KEIN History-Eintrag bei jedem Pixel!
     if (!isDragging || !dragElementId) return;
     
-    const deltaX = pos.x - dragStartPos.x;
-    const deltaY = pos.y - dragStartPos.y;
-    
-    const node = nodes.find(n => n.id === dragElementId);
-    if (node) {
-      onUpdateNode(dragElementId, {
-        x: node.x + deltaX,
-        y: node.y + deltaY,
+    // ===== TOTALER DELTA VOM DRAG-START =====
+    // Wir berechnen immer: aktuellePosition = startPosition + totalDelta
+    // Das ist robuster als frame-by-frame Delta, weil kein Fehler akkumuliert.
+    const totalDeltaX = pos.x - dragStartPos.x;
+    const totalDeltaY = pos.y - dragStartPos.y;
+
+    if (Math.abs(totalDeltaX) > 1 || Math.abs(totalDeltaY) > 1) {
+      hasMoved.current = true;
+    }
+
+    // ===== KNOTEN-DRAG (einzelner Knoten) =====
+    const isNodeDrag = dragStartNodes.current.has(dragElementId) && !dragStartPlates.current.has(dragElementId);
+    if (isNodeDrag) {
+      const start = dragStartNodes.current.get(dragElementId)!;
+      onUpdateNodeSilent(dragElementId, { x: start.x + totalDeltaX, y: start.y + totalDeltaY });
+      return;
+    }
+
+    // ===== PLATE-DRAG (Plate + alle gespeicherten Kinder) =====
+    const isPlateDrag = dragStartPlates.current.has(dragElementId);
+    if (isPlateDrag) {
+      // Alle Plates an ihre neue Position setzen (Startposition + totalDelta)
+      dragStartPlates.current.forEach((startPos, id) => {
+        onUpdatePlateSilent(id, { x: startPos.x + totalDeltaX, y: startPos.y + totalDeltaY });
+      });
+      // Alle betroffenen Knoten mitbewegen
+      dragStartNodes.current.forEach((startPos, id) => {
+        onUpdateNodeSilent(id, { x: startPos.x + totalDeltaX, y: startPos.y + totalDeltaY });
       });
     }
-    
-    const plate = plates.find(p => p.id === dragElementId);
-    if (plate) {
-      onUpdatePlate(dragElementId, {
-        x: plate.x + deltaX,
-        y: plate.y + deltaY,
-      });
-    }
-    
-    setDragStartPos(pos);
   };
 
   // Maus losgelassen
   const handleMouseUp = () => {
-    // ===== RECHTECK-AUSWAHL BEENDEN =====
-    if (isSelecting) {
-      // Finde alle Elemente im Auswahlrechteck
-      const selectedIds = getElementsInSelectionRect();
-      
-      // Prüfe ob das Rechteck groß genug war (nicht nur ein Klick)
-      const rect = getSelectionRect();
-      if (rect.width > 5 || rect.height > 5) {
-        // Setze die Auswahl
-        onSelectMultipleElements(selectedIds);
-        console.log('Rechteck-Auswahl beendet. Ausgewählt:', selectedIds.length, 'Elemente');
+    // ===== DRAG BEENDEN =====
+    // onDragEnd nur aufrufen wenn das Element sich wirklich bewegt hat!
+    // Verhindert leere History-Einträge bei einem einfachen Klick.
+    if (isDragging) {
+      isDraggingRef.current = false; // Guard zurücksetzen
+      setIsDragging(false);
+      setDragElementId(null);
+      if (hasMoved.current) {
+        onDragEnd(); // Nur bei tatsächlicher Bewegung → History-Eintrag
+        hasMoved.current = false;
       }
-      
-      setIsSelecting(false);
     }
     
-    // Drag beenden
-    setIsDragging(false);
-    setDragElementId(null);
-    
-    // Resize beenden
+    // ===== RESIZE BEENDEN =====
     if (isResizing) {
-      console.log('Resize beendet');
       setIsResizing(false);
       setResizePlateId(null);
       setResizeCorner(null);
       setResizeStartPlate(null);
+      if (hasMoved.current) {
+        onDragEnd(); // Nur bei tatsächlicher Größenänderung → History-Eintrag
+        hasMoved.current = false;
+      }
     }
   };
 
   // ----- RENDERING -----
   
-  const getNodeById = (id: string): DiagramNode | undefined => {
-    return nodes.find(n => n.id === id);
-  };
-  
+  const getNodeById = (id: string): DiagramNode | undefined => nodes.find(n => n.id === id);
   const edgeStartNode = edgeStartNodeId ? getNodeById(edgeStartNodeId) : null;
-  
-  // Berechne das Auswahlrechteck für die Darstellung
-  const selectionRect = getSelectionRect();
 
   return (
     <div className="canvas-container">
       <svg
         ref={svgRef}
         className="canvas-svg"
-        viewBox="0 0 800 600"
-        width={800 * zoomLevel}
-        height={600 * zoomLevel}
+        viewBox={`0 0 ${800 / zoomLevel} ${600 / zoomLevel}`}
+        width="100%"
+        height="100%"
         onClick={handleCanvasClick}
-        onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
         {/* ===== DEFINITIONEN ===== */}
         <defs>
-          <marker
-            id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto"
-          >
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568" />
           </marker>
-          
-          <marker
-            id="arrowhead-selected"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto"
-          >
+          <marker id="arrowhead-selected" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#4299e1" />
           </marker>
-          
-          <marker
-            id="arrowhead-preview"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto"
-          >
+          <marker id="arrowhead-preview" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#a0aec0" />
           </marker>
         </defs>
 
         {/* ===== HINTERGRUND ===== */}
-        <rect 
-          className="canvas-background"
-          width="100%" 
-          height="100%" 
-          fill="white" 
-        />
+        <rect className="canvas-background" width="100%" height="100%" fill="white" />
 
         {/* ===== PLATES ===== */}
-        {plates.map(plate => (
+        {/* Sortiert nach Verschachtelungstiefe: äußere Plates zuerst (niedrigere z-order),
+            innere Plates danach (höhere z-order → visuell darüber) */}
+        {[...plates]
+          .sort((a, b) => getPlateDepth(a.id, plates) - getPlateDepth(b.id, plates))
+          .map(plate => (
           <Plate
             key={plate.id}
             plate={plate}
             isSelected={selectedElementIds.includes(plate.id)}
             isSelectMode={isSelectMode}
+            depth={getPlateDepth(plate.id, plates)}
             onSelect={onSelectElement}
             onDragStart={handlePlateDragStart}
             onResizeStart={handlePlateResizeStart}
@@ -564,7 +503,6 @@ const Canvas: React.FC<CanvasProps> = ({
           const fromNode = getNodeById(edge.fromNodeId);
           const toNode = getNodeById(edge.toNodeId);
           if (!fromNode || !toNode) return null;
-          
           return (
             <Edge
               key={edge.id}
@@ -580,13 +518,9 @@ const Canvas: React.FC<CanvasProps> = ({
         {/* ===== VORSCHAU-LINIE für Kanten ===== */}
         {selectedTool === 'edge' && edgeStartNode && (
           <line
-            x1={edgeStartNode.x}
-            y1={edgeStartNode.y}
-            x2={mousePos.x}
-            y2={mousePos.y}
-            stroke="#a0aec0"
-            strokeWidth={1.5}
-            strokeDasharray="5,5"
+            x1={edgeStartNode.x} y1={edgeStartNode.y}
+            x2={mousePos.x} y2={mousePos.y}
+            stroke="#a0aec0" strokeWidth={1.5} strokeDasharray="5,5"
             markerEnd="url(#arrowhead-preview)"
             style={{ pointerEvents: 'none' }}
           />
@@ -604,62 +538,19 @@ const Canvas: React.FC<CanvasProps> = ({
           />
         ))}
 
-        {/* ===== AUSWAHLRECHTECK ===== */}
-        {/* Wird nur angezeigt während der Rechteck-Auswahl */}
-        {isSelecting && (
-          <rect
-            x={selectionRect.x}
-            y={selectionRect.y}
-            width={selectionRect.width}
-            height={selectionRect.height}
-            fill="rgba(66, 153, 225, 0.1)"  // Leicht transparentes Blau
-            stroke="#4299e1"
-            strokeWidth={1}
-            strokeDasharray="4,4"  // Gestrichelt
-            style={{ pointerEvents: 'none' }}
-          />
-        )}
-
         {/* ===== HINWEISE ===== */}
         {nodes.length === 0 && plates.length === 0 && (
-          <text
-            x="400"
-            y="300"
-            textAnchor="middle"
-            fill="#a0aec0"
-            fontSize="14"
-            fontFamily="sans-serif"
-          >
+          <text x="400" y="300" textAnchor="middle" fill="#a0aec0" fontSize="14" fontFamily="sans-serif">
             Select an item from the sidebar to get started.
           </text>
         )}
         
         {selectedTool === 'edge' && edgeStartNodeId && (
-          <text
-            x="400"
-            y="580"
-            textAnchor="middle"
-            fill="#4299e1"
-            fontSize="12"
-            fontFamily="sans-serif"
-          >
+          <text x="400" y="580" textAnchor="middle" fill="#4299e1" fontSize="12" fontFamily="sans-serif">
             Select a target node, or click an empty area to cancel.
           </text>
         )}
         
-        {/* ===== AUSWAHL-INFO ===== */}
-        {selectedElementIds.length > 1 && (
-          <text
-            x="400"
-            y="20"
-            textAnchor="middle"
-            fill="#4299e1"
-            fontSize="12"
-            fontFamily="sans-serif"
-          >
-            {selectedElementIds.length} Elemente ausgewählt
-          </text>
-        )}
       </svg>
     </div>
   );

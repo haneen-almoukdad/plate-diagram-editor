@@ -246,3 +246,224 @@
   color: #94a3b8;
   margin: 0;
 }
+
+/* ===== FARBWÄHLER ===== */
+
+/* Zeile mit Label + Reset-Button nebeneinander */
+.property-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.property-label-row .property-label {
+  margin-bottom: 0;
+}
+
+/* Reset-Button ("Standard") */
+.color-reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.color-reset-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Farbfelder-Raster */
+.color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* Einzelnes Farbfeld */
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1.5px solid #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+  padding: 0;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+  border-color: #64748b;
+}
+
+/* Aktiv / ausgewählt */
+.color-swatch.active {
+  border: 2.5px solid #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  transform: scale(1.1);
+}
+
+/* Zeile mit Farbwähler-Input */
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Native HTML color input */
+.color-picker-input {
+  width: 36px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  cursor: pointer;
+  background: white;
+}
+
+.color-picker-input:hover {
+  border-color: #94a3b8;
+}
+
+.color-picker-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ===== GREEK POPOVER ===== */
+
+/* Input + Ω-Button nebeneinander */
+.input-with-greek {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.input-with-greek .property-input {
+  flex: 1;
+  min-width: 0; /* verhindert Overflow */
+}
+
+/* Ω Trigger-Button */
+.greek-trigger-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Times New Roman', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  align-self: center;
+}
+
+.greek-trigger-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+/* Wrapper mit relative Position für das Popover */
+.greek-popover-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* Popover-Box */
+.greek-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 10px;
+  width: 188px;
+  animation: popoverFadeIn 0.12s ease;
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Abschnitts-Label im Popover */
+.greek-popover-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.greek-popover-section-label--second {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* Buchstaben-Raster */
+.greek-popover-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+}
+
+/* Einzelner Buchstaben-Button */
+.greek-char-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Times New Roman', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  padding: 0;
+}
+
+.greek-char-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+  transform: scale(1.1);
+}
+
+/* Index-Buttons: etwas anders (nicht kursiv) */
+.greek-char-btn.index {
+  font-style: normal;
+  font-size: 13px;
+  color: #475569;
+}
+
+.greek-char-btn.index:hover {
+  color: #2563eb;
+}

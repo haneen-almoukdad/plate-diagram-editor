@@ -32,6 +32,8 @@ export interface DiagramNode {
   shape: NodeShape;
   samplingStatement: string;  // z.B. "θ ~ Normal(μ = 0, σ = 1)"
   plateId: string | null;
+  // Optionale benutzerdefinierte Farben (überschreiben Lee & Wagenmakers-Standard)
+  fillColor?: string;   // z.B. "#bfdbfe" – falls undefined → Typ-Standardfarbe
 }
 
 // Eine Kante (Verbindung zwischen zwei Knoten)

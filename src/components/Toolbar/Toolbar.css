@@ -53,6 +53,13 @@
   background: #e2e8f0;
 }
 
+/* Deaktivierte Buttons (z.B. Undo/Redo wenn keine History verfügbar) */
+.toolbar-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Icon-only Buttons (kleiner, quadratisch) */
 .toolbar-btn.icon-only {
   padding: 8px;

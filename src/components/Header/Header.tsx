@@ -8,7 +8,7 @@ import './Header.css';
 
 interface HeaderProps {
   projectName: string;
-  onProjectNameChange: (newName: string) => void;  // NEU: Callback für Namensänderung
+  onProjectNameChange: (newName: string) => void;  // Callback für Namensänderung
 }
 
 const Header: React.FC<HeaderProps> = ({ projectName, onProjectNameChange }) => {

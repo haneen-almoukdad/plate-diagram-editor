@@ -14,29 +14,21 @@ interface EdgeProps {
 }
 
 const Edge: React.FC<EdgeProps> = ({ edge, fromNode, toNode, isSelected, onSelect }) => {
-  // Knoten-Radius (muss mit Node.tsx übereinstimmen)
   const nodeRadius = 22;
   
-  // Berechne den Winkel zwischen den beiden Knoten
   const dx = toNode.x - fromNode.x;
   const dy = toNode.y - fromNode.y;
   const angle = Math.atan2(dy, dx);
   
-  // Berechne die Länge der Verbindung
-  const length = Math.sqrt(dx * dx + dy * dy);
-  
-  // Start- und Endpunkte: Am Rand der Knoten, nicht im Zentrum
-  // So überlappen die Pfeile nicht mit den Knoten
   const startX = fromNode.x + Math.cos(angle) * nodeRadius;
   const startY = fromNode.y + Math.sin(angle) * nodeRadius;
-  const endX = toNode.x - Math.cos(angle) * (nodeRadius + 8);  // +8 für Pfeilspitze
-  const endY = toNode.y - Math.sin(angle) * (nodeRadius + 8);
+  const endX = toNode.x - Math.cos(angle) * (nodeRadius + 2);
+  const endY = toNode.y - Math.sin(angle) * (nodeRadius + 2);
   
-  // Farben
+  // Farben nach Lee & Wagenmakers: Kanten sind immer dunkelgrau/schwarz
   const strokeColor = isSelected ? '#4299e1' : '#4a5568';
   const strokeWidth = isSelected ? 2.5 : 1.5;
 
-  // Handler für Klick auf die Kante
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onSelect(edge.id);
@@ -46,23 +38,18 @@ const Edge: React.FC<EdgeProps> = ({ edge, fromNode, toNode, isSelected, onSelec
     <g className="edge" onClick={handleClick} style={{ cursor: 'pointer' }}>
       {/* Die eigentliche Linie */}
       <line
-        x1={startX}
-        y1={startY}
-        x2={endX}
-        y2={endY}
+        x1={startX} y1={startY}
+        x2={endX}   y2={endY}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
-        markerEnd="url(#arrowhead)"  // Referenz zur Pfeilspitzen-Definition
+        markerEnd={isSelected ? 'url(#arrowhead-selected)' : 'url(#arrowhead)'}
       />
-      
       {/* Unsichtbare dickere Linie für einfacheres Klicken */}
       <line
-        x1={startX}
-        y1={startY}
-        x2={endX}
-        y2={endY}
+        x1={startX} y1={startY}
+        x2={endX}   y2={endY}
         stroke="transparent"
-        strokeWidth={10}  // Breiterer Klickbereich
+        strokeWidth={10}
       />
     </g>
   );

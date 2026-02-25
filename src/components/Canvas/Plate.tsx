@@ -10,23 +10,40 @@ interface PlateProps {
   plate: DiagramPlate;                         // Die Plate-Daten
   isSelected: boolean;                         // Ist dieses Plate ausgewählt?
   isSelectMode: boolean;                       // Ist das Select-Tool aktiv?
+  depth: number;                               // Verschachtelungstiefe (0 = äußerste Plate, 1 = eine Ebene tiefer, ...)
   onSelect: (id: string) => void;              // Callback wenn Plate angeklickt wird
   onDragStart: (id: string, e: React.MouseEvent) => void;  // Drag beginnt
   onResizeStart: (id: string, corner: string, e: React.MouseEvent) => void;  // Resize beginnt
 }
 
+// ===== EBENEN-FARBEN =====
+// Jede Verschachtelungsebene bekommt einen leicht anderen Hintergrundton.
+// Konvention nach Lee & Wagenmakers (2013): Plates sind ineinander verschachtelt,
+// äußere Plates haben einen schwächeren/helleren Hintergrund.
+// Tiefe 0 = äußerste (hellster Grauton), Tiefe 1+ = progressiv etwas dunkler.
+const DEPTH_FILL_COLORS = [
+  'rgba(74, 85, 104, 0.04)',   // Tiefe 0: sehr helles Grau
+  'rgba(74, 85, 104, 0.09)',   // Tiefe 1: etwas sichtbarer
+  'rgba(74, 85, 104, 0.14)',   // Tiefe 2: noch etwas mehr
+  'rgba(74, 85, 104, 0.18)',   // Tiefe 3+: deutlicherer Hintergrund
+];
+
 const Plate: React.FC<PlateProps> = ({ 
   plate, 
   isSelected,
-  isSelectMode,  
+  isSelectMode,
+  depth,
   onSelect, 
   onDragStart,
   onResizeStart 
 }) => {
   // ===== STYLING =====
-  // Farben basierend auf Auswahl-Zustand
+  // Farben basierend auf Auswahl-Zustand und Verschachtelungstiefe
   const strokeColor = isSelected ? '#4299e1' : '#4a5568';
-  const strokeWidth = isSelected ? 2 : 1;
+  const strokeWidth = isSelected ? 3 : 2;
+  
+  // Hintergrundfarbe je nach Tiefe (äußere Plate = hell, innere = etwas dunkler)
+  const fillColor = DEPTH_FILL_COLORS[Math.min(depth, DEPTH_FILL_COLORS.length - 1)];
   
   // Radius für abgerundete Ecken
   // 8px ist ein guter Wert für ein modernes, professionelles Aussehen
@@ -77,7 +94,7 @@ const Plate: React.FC<PlateProps> = ({
         height={plate.height}
         rx={cornerRadius}
         ry={cornerRadius}
-        fill="none"
+        fill={fillColor}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         onMouseDown={handleMouseDown}
@@ -94,7 +111,7 @@ const Plate: React.FC<PlateProps> = ({
         textAnchor="end"
         style={{
           fontFamily: "'Times New Roman', serif",
-          fontSize: '14px',
+          fontSize: '20px',
           fontStyle: 'italic',
           fill: '#4a5568',
           pointerEvents: 'none',
