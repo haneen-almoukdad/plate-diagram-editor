@@ -2,7 +2,7 @@
 
 Ein webbasierter Editor zur Erstellung und Bearbeitung von Plate-Diagrammen für Multilevel-Bayesian-Inference-Modelle.
 
-Entwickelt als Forschungspraktikum (FoPra) an der Universität.
+Entwickelt als Fortgeschrittenenpraktikum (FoPra) an der Philipps-Universität Marburg.
 
 ---
 
