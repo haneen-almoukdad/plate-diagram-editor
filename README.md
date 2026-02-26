@@ -67,24 +67,6 @@ Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 
 ---
 
-### Navigation
-
-**Zoom In / Zoom Out** – Verwende die Zoom-Buttons in der Toolbar, um die Ansicht zu vergrößern oder zu verkleinern.
-
-**Pan (Ansicht verschieben)** – *(wird noch ergänzt)*
-
----
-
-### Bearbeitung
-
-**Undo** – Klicke auf den Undo-Button in der Toolbar oder drücke `Strg+Z`, um die letzte Aktion rückgängig zu machen.
-
-**Redo** – Klicke auf den Redo-Button in der Toolbar oder drücke `Strg+Y`, um eine rückgängig gemachte Aktion wiederherzustellen.
-
-**Löschen** – Wähle ein Element aus und klicke auf den Löschen-Button, um es zu löschen.
-
----
-
 ### Elemente erstellen
 
 **Knoten erstellen** – Wähle in der **Sidebar** den gewünschten Knotentyp aus und klicke auf den Canvas, um ihn zu platzieren. Verfügbare Typen:
@@ -102,6 +84,10 @@ Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 ### Eigenschaften
 
 **Label bearbeiten** – Klicke auf einen Knoten und gib im **Properties Panel** unter *Variable Name* das gewünschte Label ein. Über den **Ω-Button** neben dem Eingabefeld öffnet sich ein Popover mit griechischen Buchstaben (θ, μ, σ, λ, α, β, γ, δ, φ, ψ, ω, π, ε, η, ν, κ, τ, ρ), die per Klick an der aktuellen Cursor-Position eingefügt werden.
+
+**Plate-Index bearbeiten** – Klicke auf eine Plate und gib im **Properties Panel** unter *Index* den gewünschten Index ein (z.B. `i`, `j`, `N`). Der Index wird in der unteren rechten Ecke der Plate angezeigt. Über den **Ω-Button** öffnet sich ein Popover mit zwei Bereichen:
+- **Variablen**: griechische Buchstaben (θ, μ, σ, ...)
+- **Indizes**: häufig verwendete Indexbuchstaben (i, j, k, n, N, t, s, p, m, T, S, K)
 
 **Füllfarbe anpassen** – Klicke auf einen Knoten und wähle im **Properties Panel** unter *Füllfarbe* eine der vordefinierten Farben aus der Farbpalette. Alternativ kann über *Eigene Farbe* ein beliebiger Farbwert gewählt werden. Mit dem *Standard*-Button wird die Farbe auf den Typ-Standard zurückgesetzt.
 
@@ -130,13 +116,17 @@ Ein Klick auf ein Beispiel übernimmt es automatisch und ersetzt den ersten Buch
 
 **Select-Tool** – Wähle das Select-Tool in der Toolbar aus, um Elemente auf dem Canvas auszuwählen und zu verschieben (Drag & Drop).
 
-**Plate-Index bearbeiten** – Klicke auf eine Plate und gib im **Properties Panel** unter *Index* den gewünschten Index ein (z.B. `i`, `j`, `N`). Der Index wird in der unteren rechten Ecke der Plate angezeigt. Über den **Ω-Button** öffnet sich ein Popover mit zwei Bereichen:
-- **Variablen**: griechische Buchstaben (θ, μ, σ, ...)
-- **Indizes**: häufig verwendete Indexbuchstaben (i, j, k, n, N, t, s, p, m, T, S, K)
+**Zoom In / Zoom Out** – Verwende die Zoom-Buttons in der Toolbar, um die Ansicht zu vergrößern oder zu verkleinern.
 
-**Grid-Snapping** – Ein Platzhalter für Grid-Snapping ist vorhanden, die Funktionalität ist jedoch noch nicht implementiert (siehe Bekannte Limitierungen).
+**Pan (Ansicht verschieben)** – *(wird noch ergänzt)*
 
-**Sampling Statements anzeigen** – Klicke auf den *Statements*-Button in der Toolbar, um die automatisch generierten Sampling Statements für alle Knoten des aktuellen Diagramms anzuzeigen.
+**Undo** – Klicke auf den Undo-Button in der Toolbar oder drücke `Strg+Z`, um die letzte Aktion rückgängig zu machen.
+
+**Redo** – Klicke auf den Redo-Button in der Toolbar oder drücke `Strg+Y`, um eine rückgängig gemachte Aktion wiederherzustellen.
+
+**Löschen** – Wähle ein Element aus und klicke auf den Löschen-Button, um es zu löschen.
+
+**Sampling Statements anzeigen** – Im **Sampling Statement Panel** werden automatisch alle generierten Sampling Statements für alle Knoten des aktuellen Diagramms angezeigt. Über den **Copy All**-Button können alle Statements auf einmal in die Zwischenablage kopiert werden.
 
 
 ---
