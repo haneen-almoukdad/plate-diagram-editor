@@ -53,29 +53,91 @@ Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 
 ## Benutzungsanleitung
 
-### Knoten erstellen
-Wähle in der **Sidebar** den gewünschten Knotentyp aus (beobachtet, unbeobachtet oder deterministisch) und klicke auf den Canvas, um ihn zu platzieren.
+### Dateioperationen
 
-### Kanten erstellen
-Klicke auf einen Knoten und ziehe die Maus zu einem anderen Knoten, um eine Verbindung (Kante) zu erstellen.
+**Neues Projekt** – Klicke auf *New* in der Toolbar, um ein neues leeres Diagramm zu erstellen.
 
-### Plate erstellen
-Wähle das Plate-Werkzeug in der **Toolbar** aus und zeichne einen Rahmen um die gewünschten Knoten auf dem Canvas.
+**Projekt speichern** – Klicke auf *Save*, um das aktuelle Projekt als `.json`-Datei herunterzuladen.
 
-### Eigenschaften bearbeiten
-Klicke auf ein Element (Knoten, Kante oder Plate), um im **Properties Panel** auf der rechten Seite seine Eigenschaften (z.B. Label, Verteilung) zu bearbeiten.
+**Projekt laden** – Klicke auf *Load* und wähle eine zuvor gespeicherte `.json`-Datei aus.
 
-### Sampling Statements anzeigen
-Klicke auf den entsprechenden Button, um die automatisch generierten Sampling Statements für das aktuelle Diagramm anzuzeigen.
+**Export als PNG** – Klicke auf *Export* → *Export as PNG*, um das Diagramm als `.png`-Datei herunterzuladen.
 
-### Projekt speichern (JSON Export)
-Klicke in der **Toolbar** auf *Exportieren* → *JSON*, um das Projekt als `.json`-Datei herunterzuladen.
+**Export als SVG** – Klicke auf *Export* → *Export as SVG*, um das Diagramm als `.svg`-Datei herunterzuladen.
 
-### Projekt laden (JSON Import)
-Klicke auf *Laden* und wähle eine zuvor gespeicherte `.json`-Datei aus.
+---
 
-### SVG Export
-Klicke auf *Exportieren* → *SVG*, um das Diagramm als `.svg`-Datei herunterzuladen.
+### Navigation
+
+**Zoom In / Zoom Out** – Verwende die Zoom-Buttons in der Toolbar, um die Ansicht zu vergrößern oder zu verkleinern.
+
+**Pan (Ansicht verschieben)** – *(wird noch ergänzt)*
+
+---
+
+### Bearbeitung
+
+**Undo** – Klicke auf den Undo-Button in der Toolbar oder drücke `Strg+Z`, um die letzte Aktion rückgängig zu machen.
+
+**Redo** – Klicke auf den Redo-Button in der Toolbar oder drücke `Strg+Y`, um eine rückgängig gemachte Aktion wiederherzustellen.
+
+**Löschen** – Wähle ein Element aus und klicke auf den Löschen-Button, um es zu löschen.
+
+---
+
+### Elemente erstellen
+
+**Knoten erstellen** – Wähle in der **Sidebar** den gewünschten Knotentyp aus und klicke auf den Canvas, um ihn zu platzieren. Verfügbare Typen:
+- **Observed** – beobachteter Knoten (gefüllter Kreis oder Quadrat)
+- **Latent** – unbeobachteter Knoten (leerer Kreis)
+- **Deterministic** – deterministischer Knoten (doppelter Kreis)
+- **Constant** – konstanter Knoten
+
+**Kanten erstellen** – Klicke auf einen Knoten und ziehe die Maus zu einem anderen Knoten, um eine Verbindung zu erstellen.
+
+**Plate erstellen** – Wähle das Plate-Werkzeug in der **Toolbar** aus und zeichne einen Rahmen um die gewünschten Knoten auf dem Canvas.
+
+---
+
+### Eigenschaften
+
+**Label bearbeiten** – Klicke auf einen Knoten und gib im **Properties Panel** unter *Variable Name* das gewünschte Label ein. Über den **Ω-Button** neben dem Eingabefeld öffnet sich ein Popover mit griechischen Buchstaben (θ, μ, σ, λ, α, β, γ, δ, φ, ψ, ω, π, ε, η, ν, κ, τ, ρ), die per Klick an der aktuellen Cursor-Position eingefügt werden.
+
+**Füllfarbe anpassen** – Klicke auf einen Knoten und wähle im **Properties Panel** unter *Füllfarbe* eine der vordefinierten Farben aus der Farbpalette. Alternativ kann über *Eigene Farbe* ein beliebiger Farbwert gewählt werden. Mit dem *Standard*-Button wird die Farbe auf den Typ-Standard zurückgesetzt.
+
+**Sampling Statement eingeben** – Klicke auf einen Knoten und gib im **Properties Panel** unter *Sampling Statement* das gewünschte Statement manuell ein. Dabei gilt:
+- Für **stochastische** Knoten: `~` (z.B. `θ ~ Normal(μ = 0, σ = 1)`)
+- Für **deterministische** Knoten: `←` (z.B. `δ ← θ₁ - θ₂`)
+
+Über den **Ω-Button** neben dem Eingabefeld können griechische Buchstaben eingefügt werden. Über den **Examples-Button** öffnet sich eine Liste mit vordefinierten Beispiel-Statements, die als Vorlage übernommen werden können:
+
+| Statement | Verteilung |
+|-----------|-----------|
+| `θ ~ Beta(α = 1, β = 1)` | Beta-Verteilung (Prior) |
+| `μ ~ Normal(μ = 0, σ = 1)` | Normalverteilung |
+| `k ~ Binomial(p = θ, n = n)` | Binomialverteilung |
+| `σ ~ Uniform(a = 0, b = 10)` | Gleichverteilung |
+| `λ ~ Gamma(α = 2, β = 1)` | Gamma-Verteilung |
+| `x ~ Poisson(λ = λ)` | Poisson-Verteilung |
+| `δ ← θ₁ - θ₂` | Deterministisch (Differenz) |
+| `y ~ StudentT(ν = ν)` | Student-t-Verteilung |
+
+Ein Klick auf ein Beispiel übernimmt es automatisch und ersetzt den ersten Buchstaben durch das Label des ausgewählten Knotens.
+
+---
+
+### Werkzeuge
+
+**Select-Tool** – Wähle das Select-Tool in der Toolbar aus, um Elemente auf dem Canvas auszuwählen und zu verschieben (Drag & Drop).
+
+**Plate-Index bearbeiten** – Klicke auf eine Plate und gib im **Properties Panel** unter *Index* den gewünschten Index ein (z.B. `i`, `j`, `N`). Der Index wird in der unteren rechten Ecke der Plate angezeigt. Über den **Ω-Button** öffnet sich ein Popover mit zwei Bereichen:
+- **Variablen**: griechische Buchstaben (θ, μ, σ, ...)
+- **Indizes**: häufig verwendete Indexbuchstaben (i, j, k, n, N, t, s, p, m, T, S, K)
+
+**Grid-Snapping** – Ein Platzhalter für Grid-Snapping ist vorhanden, die Funktionalität ist jedoch noch nicht implementiert (siehe Bekannte Limitierungen).
+
+**Sampling Statements anzeigen** – Klicke auf den *Statements*-Button in der Toolbar, um die automatisch generierten Sampling Statements für alle Knoten des aktuellen Diagramms anzuzeigen.
+
 
 ---
 
@@ -86,19 +148,45 @@ Das Projekt ist eine reine **Client-Side React + TypeScript** Anwendung ohne Bac
 ### Projektstruktur
 
 ```
-src/
-├── App.tsx                  # Hauptkomponente, globaler State
-├── Canvas.tsx               # Zeichenfläche (SVG-Canvas)
-├── Node.tsx                 # Knoten-Komponente
-├── Edge.tsx                 # Kanten-Komponente
-├── Plate.tsx                # Plate-Komponente
-├── Toolbar.tsx              # Werkzeugleiste oben
-├── Sidebar.tsx              # Seitenleiste mit Elementen
-├── Header.tsx               # Kopfzeile
-├── NodePropertiesPanel.tsx  # Properties Panel (rechts)
-├── StatementPanel.tsx       # Sampling Statements Panel
-├── exportUtils.ts           # Hilfsfunktionen für JSON/SVG Export
-└── index.tsx                # Einstiegspunkt der App
+PLATE-DIAGRAM-EDITOR/
+├── examples/                            # Beispiel-Diagramme (JSON, SVG, PNG)
+├── public/
+│   ├── index.html                       # HTML-Einstiegspunkt
+│   ├── manifest.json                    # Web-App Manifest
+│   └── robots.txt
+├── src/
+│   ├── components/
+│   │   ├── Canvas/
+│   │   │   ├── Canvas.tsx               # Zeichenfläche (SVG-Canvas)
+│   │   │   ├── Edge.tsx                 # Kanten-Komponente
+│   │   │   ├── Node.tsx                 # Knoten-Komponente
+│   │   │   └── Plate.tsx                # Plate-Komponente
+│   │   ├── Header/
+│   │   │   ├── Header.tsx               # Kopfzeile mit Projektname
+│   │   │   └── Header.css
+│   │   ├── NodePropertiesPanel/
+│   │   │   ├── NodePropertiesPanel.tsx  # Properties Panel (Label, Farbe, Sampling Statement)
+│   │   │   └── NodePropertiesPanel.css
+│   │   ├── Sidebar/
+│   │   │   ├── Sidebar.tsx              # Seitenleiste zum Erstellen von Elementen
+│   │   │   └── Sidebar.css
+│   │   ├── StatementPanel/
+│   │   │   ├── StatementPanel.tsx       # Panel für generierte Sampling Statements
+│   │   │   └── StatementPanel.css
+│   │   └── Toolbar/
+│   │       ├── Toolbar.tsx              # Werkzeugleiste (Zoom, Undo/Redo, Export, etc.)
+│   │       └── Toolbar.css
+│   ├── types/
+│   │   └── index.ts                     # Typen und Datenmodell (DiagramNode, DiagramEdge, etc.)
+│   ├── utils/
+│   │   └── exportUtils.ts               # Hilfsfunktionen für PNG/SVG/JSON Export
+│   ├── App.tsx                          # Hauptkomponente, globaler State, Undo/Redo-Logik
+│   ├── App.css
+│   └── index.tsx                        # Einstiegspunkt der App
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
 ### Tech Stack
