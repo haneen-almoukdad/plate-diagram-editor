@@ -1,0 +1,232 @@
+{
+  "projectName": "example 6",
+  "nodes": [
+    {
+      "id": "node-1772106171444-jmv1bybgq",
+      "x": 348.47552231084194,
+      "y": 65.65444386190245,
+      "label": "κ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "κ ← (ξ - ψ) / (1 - ψ)",
+      "plateId": null,
+      "fillColor": "#fef9c3"
+    },
+    {
+      "id": "node-1772106173295-s3kz7l9u3",
+      "x": 227.89058179090685,
+      "y": 64.7682748912301,
+      "label": "ξ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "ξ ← α*β + (1 - α)*γ",
+      "plateId": null,
+      "fillColor": "#fef9c3"
+    },
+    {
+      "id": "node-1772106176077-ht388v3pg",
+      "x": 478.8136565493012,
+      "y": 65.65444386190245,
+      "label": "ψ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "ψ ← (xₐ + xₑ)*(xₐ + xₒ) + (xₑ + xᵢ)*(xₒ + xᵢ)",
+      "plateId": null,
+      "fillColor": "#fef9c3"
+    },
+    {
+      "id": "node-1772106193473-e3cqo9jzr",
+      "x": 349.36217628525327,
+      "y": 177.31173416661676,
+      "label": "α",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "α ~ Beta(α = 1, β = 1)",
+      "plateId": null,
+      "fillColor": "#d1fae5"
+    },
+    {
+      "id": "node-1772106195130-qj44wp7yp",
+      "x": 229.6638897397294,
+      "y": 177.31173416661676,
+      "label": "β",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "β ~ Beta(α = 1, β = 1)",
+      "plateId": null,
+      "fillColor": "#d1fae5"
+    },
+    {
+      "id": "node-1772106196588-9zn91e25j",
+      "x": 477.04034860047864,
+      "y": 175.5393962252721,
+      "label": "γ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "γ ~ Beta(α = 1, β = 1)",
+      "plateId": null,
+      "fillColor": "#d1fae5"
+    },
+    {
+      "id": "node-1772106212062-13zaqmdmo",
+      "x": 210.15750230268105,
+      "y": 271.24564505788436,
+      "label": "πₐ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "πₐ ← α * β",
+      "plateId": null,
+      "fillColor": "#fecdd3"
+    },
+    {
+      "id": "node-1772106213802-r5qldzqbz",
+      "x": 310.34940141115663,
+      "y": 270.35947608721204,
+      "label": "πₑ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "πₑ ← α * (1 - β)",
+      "plateId": null,
+      "fillColor": "#fecdd3"
+    },
+    {
+      "id": "node-1772106215173-x2ljpyl2f",
+      "x": 410.54130051963205,
+      "y": 270.35947608721204,
+      "label": "πᵢ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "πᵢ ← (1 - α) * (1 - γ)",
+      "plateId": null,
+      "fillColor": "#fecdd3"
+    },
+    {
+      "id": "node-1772106216537-7edldpjw2",
+      "x": 508.17175481314166,
+      "y": 268.685601364831,
+      "label": "πᵤ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "πᵤ ← (1 - α) * γ",
+      "plateId": null,
+      "fillColor": "#fecdd3"
+    },
+    {
+      "id": "node-1772106231337-ddphxzjef",
+      "x": 364.43529385024516,
+      "y": 356.711719118283,
+      "label": "y",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "y ~ Multinomial(p = [πₐ, πₑ, πᵢ, πᵤ], n = n)",
+      "plateId": null,
+      "fillColor": "#a0aec0"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1772108620240-0p9o2d2r2",
+      "fromNodeId": "node-1772106173295-s3kz7l9u3",
+      "toNodeId": "node-1772106171444-jmv1bybgq"
+    },
+    {
+      "id": "edge-1772108634800-44xum7f1a",
+      "fromNodeId": "node-1772106195130-qj44wp7yp",
+      "toNodeId": "node-1772106173295-s3kz7l9u3"
+    },
+    {
+      "id": "edge-1772108637554-ugjyikbqv",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106173295-s3kz7l9u3"
+    },
+    {
+      "id": "edge-1772108640841-0gv7b70xu",
+      "fromNodeId": "node-1772106196588-9zn91e25j",
+      "toNodeId": "node-1772106173295-s3kz7l9u3"
+    },
+    {
+      "id": "edge-1772108643848-xgkgelqz5",
+      "fromNodeId": "node-1772106176077-ht388v3pg",
+      "toNodeId": "node-1772106171444-jmv1bybgq"
+    },
+    {
+      "id": "edge-1772108650857-6tr163muz",
+      "fromNodeId": "node-1772106195130-qj44wp7yp",
+      "toNodeId": "node-1772106176077-ht388v3pg"
+    },
+    {
+      "id": "edge-1772108653607-wtq78fusn",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106176077-ht388v3pg"
+    },
+    {
+      "id": "edge-1772108656433-aevybl492",
+      "fromNodeId": "node-1772106196588-9zn91e25j",
+      "toNodeId": "node-1772106176077-ht388v3pg"
+    },
+    {
+      "id": "edge-1772108678025-l1w33s7pn",
+      "fromNodeId": "node-1772106195130-qj44wp7yp",
+      "toNodeId": "node-1772106212062-13zaqmdmo"
+    },
+    {
+      "id": "edge-1772108680508-sh46jibl2",
+      "fromNodeId": "node-1772106195130-qj44wp7yp",
+      "toNodeId": "node-1772106213802-r5qldzqbz"
+    },
+    {
+      "id": "edge-1772108689253-d2udkbd8a",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106212062-13zaqmdmo"
+    },
+    {
+      "id": "edge-1772108691617-hhvbvb4f7",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106213802-r5qldzqbz"
+    },
+    {
+      "id": "edge-1772108693835-11l5q2tfp",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106215173-x2ljpyl2f"
+    },
+    {
+      "id": "edge-1772108696563-29xgulpau",
+      "fromNodeId": "node-1772106193473-e3cqo9jzr",
+      "toNodeId": "node-1772106216537-7edldpjw2"
+    },
+    {
+      "id": "edge-1772108705694-hukjcg1cb",
+      "fromNodeId": "node-1772106196588-9zn91e25j",
+      "toNodeId": "node-1772106215173-x2ljpyl2f"
+    },
+    {
+      "id": "edge-1772108708086-er2z3pjrq",
+      "fromNodeId": "node-1772106196588-9zn91e25j",
+      "toNodeId": "node-1772106216537-7edldpjw2"
+    },
+    {
+      "id": "edge-1772108719191-qlzmlao8v",
+      "fromNodeId": "node-1772106212062-13zaqmdmo",
+      "toNodeId": "node-1772106231337-ddphxzjef"
+    },
+    {
+      "id": "edge-1772108721742-017e4tf03",
+      "fromNodeId": "node-1772106213802-r5qldzqbz",
+      "toNodeId": "node-1772106231337-ddphxzjef"
+    },
+    {
+      "id": "edge-1772108724421-9c9cbjf09",
+      "fromNodeId": "node-1772106215173-x2ljpyl2f",
+      "toNodeId": "node-1772106231337-ddphxzjef"
+    },
+    {
+      "id": "edge-1772108727329-yjskuanq3",
+      "fromNodeId": "node-1772106216537-7edldpjw2",
+      "toNodeId": "node-1772106231337-ddphxzjef"
+    }
+  ],
+  "plates": [],
+  "selectedTool": "select",
+  "selectedElementIds": [],
+  "zoomLevel": 0.9
+}

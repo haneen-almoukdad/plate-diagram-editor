@@ -1,70 +1,157 @@
-# Getting Started with Create React App
+# A GUI-based Editor for Plate Diagrams
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ein webbasierter Editor zur Erstellung und Bearbeitung von Plate-Diagrammen für Multilevel-Bayesian-Inference-Modelle.
 
-## Available Scripts
+Entwickelt als Forschungspraktikum (FoPra) an der Universität.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Diagrammerstellung** – Knoten (beobachtet, unbeobachtet, deterministisch), Kanten und Plates erstellen
+- **Drag & Drop** – Elemente frei auf dem Canvas verschieben
+- **Sampling-Statement Generierung** – Automatische Generierung von Sampling Statements basierend auf dem Diagramm
+- **JSON Export/Import** – Projekte speichern und wieder laden
+- **SVG Export** – Diagramme als SVG-Datei exportieren
+- **Undo/Redo** – Änderungen rückgängig machen und wiederherstellen
+- **Zoom & Pan** – Ansicht vergrößern, verkleinern und verschieben
+- **Properties Panel** – Eigenschaften von Knoten und Kanten bearbeiten
+- **Farbliche Anpassung** – Farbe der Knoten individuell anpassen
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Voraussetzungen
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Stelle sicher, dass folgendes auf deinem System installiert ist:
 
-### `npm run build`
+- [Node.js](https://nodejs.org/) (getestet mit Version v24.11.1)
+- npm (wird automatisch mit Node.js installiert)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Installation & Starten
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Repository klonen**
+   ```bash
+   git clone <https://gitlab.uni-marburg.de/almoukdh/plate-diagram-editor.git>
+   cd <plate-diagram-editor>
+   ```
 
-### `npm run eject`
+2. **Abhängigkeiten installieren**
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **App starten**
+   ```bash
+   npm start
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Benutzungsanleitung
 
-## Learn More
+### Knoten erstellen
+Wähle in der **Sidebar** den gewünschten Knotentyp aus (beobachtet, unbeobachtet oder deterministisch) und klicke auf den Canvas, um ihn zu platzieren.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Kanten erstellen
+Klicke auf einen Knoten und ziehe die Maus zu einem anderen Knoten, um eine Verbindung (Kante) zu erstellen.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Plate erstellen
+Wähle das Plate-Werkzeug in der **Toolbar** aus und zeichne einen Rahmen um die gewünschten Knoten auf dem Canvas.
 
-### Code Splitting
+### Eigenschaften bearbeiten
+Klicke auf ein Element (Knoten, Kante oder Plate), um im **Properties Panel** auf der rechten Seite seine Eigenschaften (z.B. Label, Verteilung) zu bearbeiten.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Sampling Statements anzeigen
+Klicke auf den entsprechenden Button, um die automatisch generierten Sampling Statements für das aktuelle Diagramm anzuzeigen.
 
-### Analyzing the Bundle Size
+### Projekt speichern (JSON Export)
+Klicke in der **Toolbar** auf *Exportieren* → *JSON*, um das Projekt als `.json`-Datei herunterzuladen.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Projekt laden (JSON Import)
+Klicke auf *Laden* und wähle eine zuvor gespeicherte `.json`-Datei aus.
 
-### Making a Progressive Web App
+### SVG Export
+Klicke auf *Exportieren* → *SVG*, um das Diagramm als `.svg`-Datei herunterzuladen.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## Architektur (Entwicklerhinweise)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Das Projekt ist eine reine **Client-Side React + TypeScript** Anwendung ohne Backend. Die Visualisierung erfolgt über **SVG**.
 
-### Deployment
+### Projektstruktur
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```
+src/
+├── App.tsx                  # Hauptkomponente, globaler State
+├── Canvas.tsx               # Zeichenfläche (SVG-Canvas)
+├── Node.tsx                 # Knoten-Komponente
+├── Edge.tsx                 # Kanten-Komponente
+├── Plate.tsx                # Plate-Komponente
+├── Toolbar.tsx              # Werkzeugleiste oben
+├── Sidebar.tsx              # Seitenleiste mit Elementen
+├── Header.tsx               # Kopfzeile
+├── NodePropertiesPanel.tsx  # Properties Panel (rechts)
+├── StatementPanel.tsx       # Sampling Statements Panel
+├── exportUtils.ts           # Hilfsfunktionen für JSON/SVG Export
+└── index.tsx                # Einstiegspunkt der App
+```
 
-### `npm run build` fails to minify
+### Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| Technologie | Verwendung |
+|-------------|------------|
+| React       | UI-Framework |
+| TypeScript  | Typsicherheit |
+| SVG         | Diagramm-Visualisierung |
+| npm         | Paketverwaltung |
+
+---
+
+## Browser-Kompatibilität
+
+| Browser | Support |
+|---------|---------|
+| Chrome  |  Vollständig |
+| Firefox |  Vollständig |
+| Edge    |  Eingeschränkt |
+| Safari  |  Eingeschränkt |
+
+> Die App ist für **Desktop-Nutzung** optimiert. Mobile Geräte werden nicht unterstützt.
+
+---
+
+## Beispiel-Diagramme
+
+Im Ordner `examples/` befinden sich fertige Beispiel-Diagramme als `.json`-Dateien, die direkt in den Editor geladen werden können. Um ein Beispiel zu öffnen: App starten → *Laden* klicken → gewünschte `.json`-Datei auswählen.
+
+| Datei | Vorschau |
+|-------|---------|
+| `example 1/example 1.json` | ![example_1](examples/example%201/example%201.png) |
+| `example 2/Main_Example.json` | ![Main_Example](examples/example%202/Main_Example.png) |
+| `example 3/Main_Example_color.json` | ![Main_Example_color](examples/example%203/Main_Example_color.png) |
+| `example 4/example 4.json` | ![example_4](examples/example%204/example%204.png) |
+| `example 5/example 5.json` | ![example_5](examples/example%205/example%205.png) |
+| `example 6/example 6.json` | ![example_6](examples/example%206/example%206.png) |
+
+---
+
+## Bekannte Limitierungen
+
+- Tiefstellung von Buchstaben in Sampling Statements eingeschränkt: Unicode unterstützt nicht alle Buchstaben als Tiefstellung, dadurch funktioniert das Kopieren der Statements nur teilweise
+- Kein automatisches Layout (Elemente müssen manuell positioniert werden)
+- Grid-Snapping nicht implementiert (Platzhalter vorhanden, aber Funktionalität fehlt)
+- Kein LaTeX-Syntax Support für Labels
+
+
+---
+
+## Autor
+
+**Haneen Almoukdad**  
+Fortgeschrittenenpraktikum – B.Sc. Data Science  
+Betreuer: Prof. Dr. J. Tunnermann, M.Sc. Teresa Dreyer, Prof. Dr. C. Bockisch

@@ -1,0 +1,86 @@
+{
+  "projectName": "example 4",
+  "nodes": [
+    {
+      "id": "node-1772066887044-pwd6jyror",
+      "x": 234.98381358619713,
+      "y": 107.30438548350224,
+      "label": "pᵢ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "pᵢ ~ Beta(α = 1, β = 1)",
+      "plateId": null
+    },
+    {
+      "id": "node-1772066889195-ymilizou7",
+      "x": 419.40784026374496,
+      "y": 106.41821651282989,
+      "label": "qⱼ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "qⱼ ~ Beta(α = 1, β = 1)",
+      "plateId": null
+    },
+    {
+      "id": "node-1772066913615-9dqu2ryie",
+      "x": 328.9691348737936,
+      "y": 109.07672342484692,
+      "label": "θᵢⱼ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "θᵢⱼ ← pᵢ * qⱼ",
+      "plateId": null
+    },
+    {
+      "id": "node-1772066923892-1vr9hrcyv",
+      "x": 327.195826924971,
+      "y": 226.05102755359525,
+      "label": "kᵢⱼ",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "kᵢⱼ ~ Bernoulli(p = θᵢⱼ)",
+      "plateId": null,
+      "fillColor": "#a0aec0"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1772066959794-kbpuhfcja",
+      "fromNodeId": "node-1772066887044-pwd6jyror",
+      "toNodeId": "node-1772066913615-9dqu2ryie"
+    },
+    {
+      "id": "edge-1772066962463-5lph6c2m7",
+      "fromNodeId": "node-1772066889195-ymilizou7",
+      "toNodeId": "node-1772066913615-9dqu2ryie"
+    },
+    {
+      "id": "edge-1772066971187-1y9d0r48o",
+      "fromNodeId": "node-1772066913615-9dqu2ryie",
+      "toNodeId": "node-1772066923892-1vr9hrcyv"
+    }
+  ],
+  "plates": [
+    {
+      "id": "plate-1772067105674-q2abrensl",
+      "x": 190.1300487161809,
+      "y": 70.59692004358729,
+      "width": 181.91954307880636,
+      "height": 214.3157972167313,
+      "label": "i people",
+      "parentPlateId": null
+    },
+    {
+      "id": "plate-1772067175471-f81w1wman",
+      "x": 289.43529385024516,
+      "y": 77.68627180896596,
+      "width": 192.5593907717418,
+      "height": 215.20196618740363,
+      "label": "j questions",
+      "parentPlateId": null
+    }
+  ],
+  "selectedTool": "select",
+  "selectedElementIds": [],
+  "zoomLevel": 1
+}

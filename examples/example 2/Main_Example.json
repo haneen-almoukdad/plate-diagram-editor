@@ -1,0 +1,130 @@
+{
+  "projectName": "Main_Example",
+  "nodes": [
+    {
+      "id": "node-1771775472210-wi79nnkr6",
+      "x": 272.0293533637029,
+      "y": 150.00663115708053,
+      "label": "ACⱼ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "ACⱼ ~ Gamma(α = 4, β = 2)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775473619-q9jvrukof",
+      "x": 273.44637729453314,
+      "y": 235.54896229047174,
+      "label": "PSEⱼ ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "PSEⱼ ~ Normal(μ = 7, σ = 3)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775492747-hsy0cg0a1",
+      "x": 201.35597373512107,
+      "y": 259.14996750050034,
+      "label": "PSEμ ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "PSEμ ← Mean(PSEⱼ)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775494340-d6s2vn4r2",
+      "x": 202.5989117275247,
+      "y": 120.21005120238353,
+      "label": "ACμ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "ACμ ← Mean(ACⱼ)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775511805-zmlempsn5",
+      "x": 331.864462937505,
+      "y": 190.29348038587835,
+      "label": "θⱼₜ ",
+      "type": "deterministic",
+      "shape": "circle",
+      "samplingStatement": "θⱼₜ ← Ψ(t, ACⱼ, PSEⱼ)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775521938-rxgih6lmj",
+      "x": 398.9831145273025,
+      "y": 190.29348038587838,
+      "label": "yⱼₜ",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "yⱼₜ ~ Binomial(p = θⱼₜ, n = nⱼₜ)",
+      "plateId": null
+    },
+    {
+      "id": "node-1771775523023-75l181ce2",
+      "x": 463.6158901322927,
+      "y": 190.29348038587833,
+      "label": " nⱼₜ",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "",
+      "plateId": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1771776045932-lmn9gabef",
+      "fromNodeId": "node-1771775472210-wi79nnkr6",
+      "toNodeId": "node-1771775494340-d6s2vn4r2"
+    },
+    {
+      "id": "edge-1771776047533-zpde0bugj",
+      "fromNodeId": "node-1771775473619-q9jvrukof",
+      "toNodeId": "node-1771775492747-hsy0cg0a1"
+    },
+    {
+      "id": "edge-1771776051628-ds9v10zst",
+      "fromNodeId": "node-1771775472210-wi79nnkr6",
+      "toNodeId": "node-1771775511805-zmlempsn5"
+    },
+    {
+      "id": "edge-1771776053755-mnt7joxn6",
+      "fromNodeId": "node-1771775473619-q9jvrukof",
+      "toNodeId": "node-1771775511805-zmlempsn5"
+    },
+    {
+      "id": "edge-1771776055452-w3dd5pln9",
+      "fromNodeId": "node-1771775511805-zmlempsn5",
+      "toNodeId": "node-1771775521938-rxgih6lmj"
+    },
+    {
+      "id": "edge-1771776056852-mh9zm4rvh",
+      "fromNodeId": "node-1771775523023-75l181ce2",
+      "toNodeId": "node-1771775521938-rxgih6lmj"
+    }
+  ],
+  "plates": [
+    {
+      "id": "plate-1771775030163-8fw7fn6zd",
+      "x": 245.67802100587207,
+      "y": 102.32436497089705,
+      "width": 263.10735730873273,
+      "height": 184.46675548852355,
+      "label": "j Participants",
+      "parentPlateId": null
+    },
+    {
+      "id": "plate-1771775033094-bjfkv473q",
+      "x": 304.0961066488439,
+      "y": 131.5983732032362,
+      "width": 191.01695374932063,
+      "height": 118.63237253423316,
+      "label": "t Trails",
+      "parentPlateId": null
+    }
+  ],
+  "selectedTool": "select",
+  "selectedElementIds": [],
+  "zoomLevel": 1
+}

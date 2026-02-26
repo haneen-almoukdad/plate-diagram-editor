@@ -1,0 +1,63 @@
+{
+  "projectName": "example 01",
+  "nodes": [
+    {
+      "id": "node-1772066024978-44ohzyikr",
+      "x": 328.9691348737936,
+      "y": 171.10855137191044,
+      "label": "kᵢ ",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "kᵢ ~ Binomial(p = θ, n = nᵢ)",
+      "plateId": null,
+      "fillColor": "#a0aec0"
+    },
+    {
+      "id": "node-1772066039218-jhhhwrmxq",
+      "x": 328.9691348737936,
+      "y": 69.1991197445918,
+      "label": "θ",
+      "type": "unobserved",
+      "shape": "circle",
+      "samplingStatement": "θ ~ Beta(α = 1, β = 1)",
+      "plateId": null
+    },
+    {
+      "id": "node-1772066046044-tuufssxk0",
+      "x": 329.8557888482049,
+      "y": 256.18077255645466,
+      "label": "x",
+      "type": "unobserved",
+      "shape": "square",
+      "samplingStatement": "",
+      "plateId": null,
+      "fillColor": "#a0aec0"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1772066157431-s11ynxo8p",
+      "fromNodeId": "node-1772066039218-jhhhwrmxq",
+      "toNodeId": "node-1772066024978-44ohzyikr"
+    },
+    {
+      "id": "edge-1772066160006-v9623spdm",
+      "fromNodeId": "node-1772066046044-tuufssxk0",
+      "toNodeId": "node-1772066024978-44ohzyikr"
+    }
+  ],
+  "plates": [
+    {
+      "id": "plate-1772066173845-w852stb2l",
+      "x": 285.0020239781886,
+      "y": 115.7915375478764,
+      "width": 91.48083768885513,
+      "height": 185.95839015521656,
+      "label": "i",
+      "parentPlateId": null
+    }
+  ],
+  "selectedTool": "select",
+  "selectedElementIds": [],
+  "zoomLevel": 1
+}
