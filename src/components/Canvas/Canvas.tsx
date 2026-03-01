@@ -76,6 +76,13 @@ const Canvas: React.FC<CanvasProps> = ({
   const [edgeStartNodeId, setEdgeStartNodeId] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
+  // ===== ZUSTAND FÜR PAN (Verschieben des sichtbaren Bereichs) =====
+  const [panX, setPanX] = useState(0);
+  const [panY, setPanY] = useState(0);
+  const isPanningRef = useRef(false);
+  const panStartClient = useRef({ x: 0, y: 0 });
+  const panStartValues = useRef({ x: 0, y: 0 });
+
   // ===== ZUSTAND FÜR PLATE-RESIZE =====
   const [isResizing, setIsResizing] = useState(false);
   const [resizePlateId, setResizePlateId] = useState<string | null>(null);
@@ -155,15 +162,15 @@ const Canvas: React.FC<CanvasProps> = ({
     if (!svgRef.current) return { x: 0, y: 0 };
     const svg = svgRef.current;
     const rect = svg.getBoundingClientRect();
-    // SVG nimmt 100% der Container-Breite ein, viewBox skaliert mit zoomLevel.
+    // SVG nimmt 100% der Container-Breite ein, viewBox skaliert mit zoomLevel + panOffset.
     // Mausposition muss in SVG-Koordinaten umgerechnet werden:
-    // SVG-Koordinate = Mausposition_relativ / (renderedSize / viewBoxSize)
+    // SVG-Koordinate = Mausposition_relativ / (renderedSize / viewBoxSize) + panOffset
     const scaleX = rect.width  / (800 / zoomLevel);
     const scaleY = rect.height / (600 / zoomLevel);
-    const x = (e.clientX - rect.left) / scaleX;
-    const y = (e.clientY - rect.top)  / scaleY;
+    const x = (e.clientX - rect.left) / scaleX + panX;
+    const y = (e.clientY - rect.top)  / scaleY + panY;
     return { x, y };
-  }, [zoomLevel]);
+  }, [zoomLevel, panX, panY]);
 
   const generateId = (prefix: string): string => {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -247,6 +254,16 @@ const Canvas: React.FC<CanvasProps> = ({
       }
     } else {
       onSelectElement(nodeId);
+    }
+  };
+
+  // Pan-Start: mittlere Maustaste (button === 1)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      e.preventDefault(); // Verhindert Browser-Scroll-Verhalten
+      isPanningRef.current = true;
+      panStartClient.current = { x: e.clientX, y: e.clientY };
+      panStartValues.current = { x: panX, y: panY };
     }
   };
 
@@ -337,6 +354,19 @@ const Canvas: React.FC<CanvasProps> = ({
 
   // Mausbewegung
   const handleMouseMove = (e: React.MouseEvent) => {
+    // ===== PAN-LOGIK =====
+    if (isPanningRef.current) {
+      if (!svgRef.current) return;
+      const rect = svgRef.current.getBoundingClientRect();
+      const scaleX = rect.width  / (800 / zoomLevel);
+      const scaleY = rect.height / (600 / zoomLevel);
+      const deltaX = (e.clientX - panStartClient.current.x) / scaleX;
+      const deltaY = (e.clientY - panStartClient.current.y) / scaleY;
+      setPanX(panStartValues.current.x - deltaX);
+      setPanY(panStartValues.current.y - deltaY);
+      return;
+    }
+
     const pos = getMousePosition(e);
     
     if (selectedTool === 'edge' && edgeStartNodeId !== null) {
@@ -420,6 +450,12 @@ const Canvas: React.FC<CanvasProps> = ({
 
   // Maus losgelassen
   const handleMouseUp = () => {
+    // ===== PAN BEENDEN =====
+    if (isPanningRef.current) {
+      isPanningRef.current = false;
+      return;
+    }
+
     // ===== DRAG BEENDEN =====
     // onDragEnd nur aufrufen wenn das Element sich wirklich bewegt hat!
     // Verhindert leere History-Einträge bei einem einfachen Klick.
@@ -456,13 +492,15 @@ const Canvas: React.FC<CanvasProps> = ({
       <svg
         ref={svgRef}
         className="canvas-svg"
-        viewBox={`0 0 ${800 / zoomLevel} ${600 / zoomLevel}`}
+        viewBox={`${panX} ${panY} ${800 / zoomLevel} ${600 / zoomLevel}`}
         width="100%"
         height="100%"
         onClick={handleCanvasClick}
+        onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        style={{ cursor: isPanningRef.current ? 'grabbing' : 'default' }}
       >
         {/* ===== DEFINITIONEN ===== */}
         <defs>

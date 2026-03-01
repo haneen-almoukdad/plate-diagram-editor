@@ -118,7 +118,7 @@ Ein Klick auf ein Beispiel übernimmt es automatisch und ersetzt den ersten Buch
 
 **Zoom In / Zoom Out** – Verwende die Zoom-Buttons in der Toolbar, um die Ansicht zu vergrößern oder zu verkleinern.
 
-**Pan (Ansicht verschieben)** – *(wird noch ergänzt)*
+**Pan (Ansicht verschieben)** – Halte die **mittlere Maustaste** (Mausrad drücken) gedrückt und ziehe die Maus, um den sichtbaren Bereich des Canvas zu verschieben. Pan funktioniert in jedem Werkzeugmodus, ohne das aktuell ausgewählte Werkzeug zu wechseln.
 
 **Undo** – Klicke auf den Undo-Button in der Toolbar oder drücke `Strg+Z`, um die letzte Aktion rückgängig zu machen.
 
