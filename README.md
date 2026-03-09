@@ -224,6 +224,8 @@ Im Ordner `examples/` befinden sich fertige Beispiel-Diagramme als `.json`-Datei
 - Kein automatisches Layout (Elemente müssen manuell positioniert werden)
 - Grid-Snapping nicht implementiert (Platzhalter vorhanden, aber Funktionalität fehlt)
 - Kein LaTeX-Syntax Support für Labels
+- Plate-Verschachtelung (Nesting) wird nur für genau 2 Plates unterstützt – tiefere Verschachtelungen mit 3 oder mehr Plates sind nicht vorgesehen und können zu unerwartetem Verhalten führen
+- Die maximale Knotenanzahl, die der Editor stabil verarbeiten kann, ist nicht definiert und nicht getestet
 
 
 ---

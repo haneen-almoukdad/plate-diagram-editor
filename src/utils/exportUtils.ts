@@ -145,7 +145,7 @@ function createExportSVG(
     exportSvg.appendChild(originalDefs.cloneNode(true));
   }
   
-  // ===== KORRIGIERT: Klone alle Plates, Edges und Nodes =====
+  // Klone alle Plates, Edges und Nodes =====
   // Wir suchen jetzt nach:
   // - .plate (für Plates)
   // - .edge (für Kanten)  
