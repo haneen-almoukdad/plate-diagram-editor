@@ -83,11 +83,16 @@ Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 
 ### Eigenschaften
 
-**Label bearbeiten** – Klicke auf einen Knoten und gib im **Properties Panel** unter *Variable Name* das gewünschte Label ein. Über den **Ω-Button** neben dem Eingabefeld öffnet sich ein Popover mit griechischen Buchstaben (θ, μ, σ, λ, α, β, γ, δ, φ, ψ, ω, π, ε, η, ν, κ, τ, ρ), die per Klick an der aktuellen Cursor-Position eingefügt werden.
+**Label bearbeiten** – Klicke auf einen Knoten und gib im **Properties Panel** unter *Variable Name* das gewünschte Label ein. Über den **Ω-Button** neben dem Eingabefeld öffnet sich ein Popover mit drei Bereichen:
+- **Variablen**: griechische Buchstaben (θ, μ, σ, λ, α, β, γ, δ, φ, ψ, ω, π, ε, η, ν, κ, τ, ρ)
+- **Tiefgestellt**: Ziffern und ausgewählte Buchstaben (₀–₉, ₐ, ₑ, ᵢ, ₒ, ᵤ, ₙ, ₖ, ₘ, ₚ, ₛ, ₜ, ₓ)
+- **Hochgestellt**: Ziffern und ausgewählte Buchstaben (⁰–⁹, ᵃ, ᵇ, ᶜ, ᵈ, ᵉ, ⁱ, ʲ, ᵏ, ⁿ, ᵒ, ᵖ, ˢ, ᵗ, ˣ)
 
-**Plate-Index bearbeiten** – Klicke auf eine Plate und gib im **Properties Panel** unter *Index* den gewünschten Index ein (z.B. `i`, `j`, `N`). Der Index wird in der unteren rechten Ecke der Plate angezeigt. Über den **Ω-Button** öffnet sich ein Popover mit zwei Bereichen:
+**Plate-Index bearbeiten** – Klicke auf eine Plate und gib im **Properties Panel** unter *Index* den gewünschten Index ein (z.B. `i`, `j`, `N`). Der Index wird in der unteren rechten Ecke der Plate angezeigt. Über den **Ω-Button** öffnet sich ein Popover mit vier Bereichen:
 - **Variablen**: griechische Buchstaben (θ, μ, σ, ...)
 - **Indizes**: häufig verwendete Indexbuchstaben (i, j, k, n, N, t, s, p, m, T, S, K)
+- **Tiefgestellt**: Ziffern und ausgewählte Buchstaben (₀–₉, ₐ, ₑ, ᵢ, ₒ, ᵤ, ₙ, ₖ, ₘ, ₚ, ₛ, ₜ, ₓ)
+- **Hochgestellt**: Ziffern und ausgewählte Buchstaben (⁰–⁹, ᵃ, ᵇ, ᶜ, ᵈ, ᵉ, ⁱ, ʲ, ᵏ, ⁿ, ᵒ, ᵖ, ˢ, ᵗ, ˣ)
 
 **Füllfarbe anpassen** – Klicke auf einen Knoten und wähle im **Properties Panel** unter *Füllfarbe* eine der vordefinierten Farben aus der Farbpalette. Alternativ kann über *Eigene Farbe* ein beliebiger Farbwert gewählt werden. Mit dem *Standard*-Button wird die Farbe auf den Typ-Standard zurückgesetzt.
 
@@ -95,7 +100,10 @@ Die App öffnet sich automatisch im Browser unter `http://localhost:3000`.
 - Für **stochastische** Knoten: `~` (z.B. `θ ~ Normal(μ = 0, σ = 1)`)
 - Für **deterministische** Knoten: `←` (z.B. `δ ← θ₁ - θ₂`)
 
-Über den **Ω-Button** neben dem Eingabefeld können griechische Buchstaben eingefügt werden. Über den **Examples-Button** öffnet sich eine Liste mit vordefinierten Beispiel-Statements, die als Vorlage übernommen werden können:
+Über den **Ω-Button** neben dem Eingabefeld öffnet sich ein Popover mit drei Bereichen:
+- **Variablen**: griechische Buchstaben (θ, μ, σ, ...)
+- **Tiefgestellt**: Ziffern und ausgewählte Buchstaben (₀–₉, ₐ, ₑ, ᵢ, ₒ, ᵤ, ₙ, ₖ, ₘ, ₚ, ₛ, ₜ, ₓ)
+- **Hochgestellt**: Ziffern und ausgewählte Buchstaben (⁰–⁹, ᵃ, ᵇ, ᶜ, ᵈ, ᵉ, ⁱ, ʲ, ᵏ, ⁿ, ᵒ, ᵖ, ˢ, ᵗ, ˣ) Über den **Examples-Button** öffnet sich eine Liste mit vordefinierten Beispiel-Statements, die als Vorlage übernommen werden können:
 
 | Statement | Verteilung |
 |-----------|-----------|
@@ -118,7 +126,7 @@ Ein Klick auf ein Beispiel übernimmt es automatisch und ersetzt den ersten Buch
 
 **Zoom In / Zoom Out** – Verwende die Zoom-Buttons in der Toolbar, um die Ansicht zu vergrößern oder zu verkleinern.
 
-**Pan (Ansicht verschieben)** – Halte die **mittlere Maustaste** (Mausrad drücken) gedrückt und ziehe die Maus, um den sichtbaren Bereich des Canvas zu verschieben. Pan funktioniert in jedem Werkzeugmodus, ohne das aktuell ausgewählte Werkzeug zu wechseln.
+**Pan (Ansicht verschieben)** – *(wird noch ergänzt)*
 
 **Undo** – Klicke auf den Undo-Button in der Toolbar oder drücke `Strg+Z`, um die letzte Aktion rückgängig zu machen.
 
@@ -139,6 +147,10 @@ Das Projekt ist eine reine **Client-Side React + TypeScript** Anwendung ohne Bac
 
 ```
 PLATE-DIAGRAM-EDITOR/
+├── docs/                                
+│   ├── ICD_Plate_Diagram_Editor.pdf
+│   ├── Software_Requirements_Specification.pdf
+│   └── Testdokumentation_Plate_Diagram_Editor.pdf
 ├── examples/                            # Beispiel-Diagramme (JSON, SVG, PNG)
 ├── public/
 │   ├── index.html                       # HTML-Einstiegspunkt
@@ -220,13 +232,124 @@ Im Ordner `examples/` befinden sich fertige Beispiel-Diagramme als `.json`-Datei
 
 ## Bekannte Limitierungen
 
-- Tiefstellung von Buchstaben in Sampling Statements eingeschränkt: Unicode unterstützt nicht alle Buchstaben als Tiefstellung, dadurch funktioniert das Kopieren der Statements nur teilweise
-- Kein automatisches Layout (Elemente müssen manuell positioniert werden)
-- Grid-Snapping nicht implementiert (Platzhalter vorhanden, aber Funktionalität fehlt)
-- Kein LaTeX-Syntax Support für Labels
-- Plate-Verschachtelung (Nesting) wird nur für genau 2 Plates unterstützt – tiefere Verschachtelungen mit 3 oder mehr Plates sind nicht vorgesehen und können zu unerwartetem Verhalten führen
-- Die maximale Knotenanzahl, die der Editor stabil verarbeiten kann, ist nicht definiert und nicht getestet
+- **Tiefgestellte griechische Buchstaben nicht verfügbar** – Unicode enthält keine tiefgestellten griechischen Buchstaben (z.B. ist `θᵢ` mit griechischem Index nicht darstellbar). Tiefstellung ist nur für Ziffern und eine begrenzte Auswahl lateinischer Buchstaben möglich (z.B. `θ₁`, `θₙ`).
+- **Zoom nur über Toolbar-Buttons** – Ein Zoom per Mausrad ist nicht implementiert; die Ansicht lässt sich ausschließlich über die Zoom-In/Zoom-Out-Buttons in der Toolbar anpassen.
+- **Performance-Grenze bei ca. 40 Knoten** – Die Anwendung ist für Diagramme mit bis zu 40 Knoten optimiert. Bei größeren Diagrammen können spürbare Performance-Einbußen auftreten.
+- **Eingeschränkte Browser-Unterstützung** – Die App ist vollständig für Chrome und Firefox getestet. Edge und Safari werden nur eingeschränkt unterstützt.
+- **Mobile Geräte nicht unterstützt** – Die App ist ausschließlich für die Desktop-Nutzung ausgelegt; Touch-Eingabe und kleine Bildschirme werden nicht berücksichtigt.
 
+---
+
+## Nice to Have
+
+- **Grid-Snapping** – Knoten und Plates rasten beim Verschieben automatisch an einem konfigurierbaren Raster ein. Button und Zustand (`gridSnappingEnabled`) sind bereits vorhanden; die Snap-Logik selbst fehlt noch (siehe *Erweiterungshinweise für Entwickler*).
+- **Automatisches Layout** – Elemente werden automatisch angeordnet, sodass manuelle Positionierung entfällt.
+- **LaTeX-Syntax für griechische Buchstaben** – Labels und Sampling Statements könnten als LaTeX-Ausdrücke eingegeben und gerendert werden (z.B. `\theta` → θ).
+- **Export als LaTeX** – Das fertige Diagramm könnte direkt als LaTeX-Code (z.B. mit dem Paket `tikz`) exportiert werden, um es in wissenschaftliche Dokumente einzubetten.
+- **Auswahl der Reihenfolge von Sampling Statements** – Im Statement Panel könnten Nutzer die Anzeigereihenfolge der generierten Statements manuell festlegen oder per Drag & Drop umsortieren.
+- **Mehrfachauswahl per Rechteck** – Durch Aufziehen eines Auswahlrahmens könnten mehrere Elemente gleichzeitig selektiert und verschoben werden.
+
+---
+
+## Erweiterungshinweise für Entwickler
+
+### Grid-Snapping weiterführen
+
+Der Zustand und der Toggle-Button für Grid-Snapping sind bereits vollständig vorhanden, aber die Logik, die Positionen tatsächlich einrastet, fehlt noch. Die folgenden Stellen müssen ergänzt werden:
+
+**1. `src/components/Toolbar/Toolbar.tsx` – Button existiert bereits (Zeilen 212–219)**
+
+```tsx
+// Grid-Snapping-Button ist vorhanden und gibt gridSnappingEnabled + onToggleGridSnapping weiter.
+// Keine Änderung hier nötig.
+<button
+  className={`toolbar-btn icon-only ${gridSnappingEnabled ? 'active' : ''}`}
+  onClick={onToggleGridSnapping}
+  title="Grid-Snapping ein/aus"
+>
+  <Grid3X3 size={ICON_SIZE} />
+</button>
+```
+
+**2. `src/components/Canvas/Canvas.tsx` – Hier muss die Snap-Logik eingebaut werden**
+
+Eine Hilfsfunktion `snapToGrid` einfügen (z.B. nach `generateId`, ca. Zeile 177):
+
+```tsx
+const GRID_SIZE = 20; // Rastergröße in SVG-Einheiten
+
+const snapToGrid = (value: number): number => {
+  return Math.round(value / GRID_SIZE) * GRID_SIZE;
+};
+```
+
+Dann an **drei Stellen** im Canvas die rohen Koordinaten durch gerundete Werte ersetzen, wenn `gridSnappingEnabled` aktiv ist:
+
+- **Knoten platzieren** (`handleCanvasClick`, ca. Zeile 200–210): `x: pos.x` → `x: gridSnappingEnabled ? snapToGrid(pos.x) : pos.x`
+- **Knoten verschieben** (`handleMouseMove`, ca. Zeile 431–434): `x: start.x + totalDeltaX` → mit `snapToGrid(...)` wrappen
+- **Plate verschieben** (`handleMouseMove`, ca. Zeile 441–447): analog für Plate-Koordinaten
+
+Damit `gridSnappingEnabled` im Canvas bekannt ist, muss es als Prop übergeben werden:
+
+```tsx
+// In CanvasProps (ca. Zeile 12) ergänzen:
+gridSnappingEnabled: boolean;
+
+// In App.tsx beim Canvas-Aufruf:
+<Canvas gridSnappingEnabled={gridSnappingEnabled} ... />
+```
+
+---
+
+### Neue Knotentypen oder Sidebar-Elemente hinzufügen
+
+Um einen neuen Knotentyp (z.B. „Factor Node") zur Sidebar und zum Canvas hinzuzufügen, sind Änderungen in **drei Dateien** nötig:
+
+**1. `src/types/index.ts` – Neuen Typ registrieren**
+
+```ts
+// ToolType erweitern (ca. Zeile 13):
+export type ToolType =
+  | 'select'
+  | 'node-observed'
+  | 'node-unobserved'
+  | 'node-deterministic'
+  | 'node-square'
+  | 'node-factor'   // ← NEU
+  | 'edge'
+  | 'plate';
+```
+
+**2. `src/components/Sidebar/Sidebar.tsx` – Button in der Sidebar ergänzen (nach Zeile 88)**
+
+```tsx
+<button
+  className={`sidebar-button ${selectedTool === 'node-factor' ? 'selected' : ''}`}
+  onClick={() => onToolSelect('node-factor')}
+  title="Faktor-Knoten"
+>
+  <Diamond size={ICON_SIZE} className="sidebar-icon" />
+  <span className="sidebar-button-label">Factor</span>
+</button>
+```
+
+**3. `src/components/Canvas/Canvas.tsx` – Switch-Case ergänzen (ca. Zeile 193)**
+
+```tsx
+case 'node-factor': nodeType = 'observed'; nodeShape = 'circle'; break; // Anpassen nach Bedarf
+```
+
+Für rein optische Unterschiede (z.B. Rautenform) muss zusätzlich `src/components/Canvas/Node.tsx` angepasst werden, wo die SVG-Form des Knotens gerendert wird.
+
+---
+
+### Neue Toolbar-Schaltfläche hinzufügen
+
+Neue Buttons kommen in `src/components/Toolbar/Toolbar.tsx`. Das Muster ist immer dasselbe:
+
+1. Callback als Prop im `ToolbarProps`-Interface deklarieren (ca. Zeile 26–45).
+2. Button in der gewünschten `toolbar-group` ergänzen (nach dem Muster der bestehenden Buttons).
+3. Den Callback in `App.tsx` definieren und als Prop an `<Toolbar>` übergeben.
 
 ---
 

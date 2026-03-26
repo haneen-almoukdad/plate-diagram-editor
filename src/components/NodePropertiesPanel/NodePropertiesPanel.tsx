@@ -6,6 +6,8 @@ import './NodePropertiesPanel.css';
 // ===== GRIECHISCHE BUCHSTABEN =====
 const GREEK_VARIABLES = ['θ', 'μ', 'σ', 'λ', 'α', 'β', 'γ', 'δ', 'φ', 'ψ', 'ω', 'π', 'ε', 'η', 'ν', 'κ', 'τ', 'ρ'];
 const GREEK_INDICES   = ['i', 'j', 'k', 'n', 'N', 't', 's', 'p', 'm', 'T', 'S', 'K'];
+const SUB_CHARS       = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉','ₐ','ₑ','ᵢ','ₒ','ᵤ','ₙ','ₖ','ₘ','ₚ','ₛ','ₜ','ₓ'];
+const SUP_CHARS       = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹','ᵃ','ᵇ','ᶜ','ᵈ','ᵉ','ⁱ','ʲ','ᵏ','ⁿ','ᵒ','ᵖ','ˢ','ᵗ','ˣ'];
 
 // ===== FARBPALETTE =====
 const NODE_COLOR_SWATCHES = [
@@ -104,6 +106,26 @@ const GreekPopover: React.FC<GreekPopoverProps> = ({ inputRef, onInsert, showInd
               </div>
             </>
           )}
+
+          {/* Tiefgestellt */}
+          <div className="greek-popover-section-label greek-popover-section-label--second">Tiefgestellt</div>
+          <div className="greek-popover-grid">
+            {SUB_CHARS.map(ch => (
+              <button key={ch} className="greek-char-btn" onClick={() => handleInsert(ch)}>
+                {ch}
+              </button>
+            ))}
+          </div>
+
+          {/* Hochgestellt */}
+          <div className="greek-popover-section-label greek-popover-section-label--second">Hochgestellt</div>
+          <div className="greek-popover-grid">
+            {SUP_CHARS.map(ch => (
+              <button key={ch} className="greek-char-btn" onClick={() => handleInsert(ch)}>
+                {ch}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
