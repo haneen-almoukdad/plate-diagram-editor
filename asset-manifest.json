@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/plate-diagram-editor/static/css/main.0eea8292.css",
+    "main.js": "/plate-diagram-editor/static/js/main.e2af10dd.js",
+    "index.html": "/plate-diagram-editor/index.html",
+    "main.0eea8292.css.map": "/plate-diagram-editor/static/css/main.0eea8292.css.map",
+    "main.e2af10dd.js.map": "/plate-diagram-editor/static/js/main.e2af10dd.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0eea8292.css",
+    "static/js/main.e2af10dd.js"
+  ]
+}
